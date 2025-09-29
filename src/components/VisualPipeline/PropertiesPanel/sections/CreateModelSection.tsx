@@ -22,32 +22,32 @@ export function CreateModelSection({
   handleDeleteEnv,
   handleAddEnv,
 }: Props) {
-  const handleExecutionRoleChange = (value: string) =>
+  const handleExecutionRoleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
-        ExecutionRoleArn: value,
+        ExecutionRoleArn: e.target.value,
       },
     });
 
-  const handleModelDataUrlGetChange = (value: string) =>
+  const handleModelDataUrlGetChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         PrimaryContainer: {
           ...data.Arguments?.PrimaryContainer,
-          ModelDataUrl: { Get: value },
+          ModelDataUrl: { Get: e.target.value },
         },
       },
     });
 
-  const handlePrimaryContainerImageChange = (value: string) =>
+  const handlePrimaryContainerImageChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         PrimaryContainer: {
           ...data.Arguments?.PrimaryContainer,
-          Image: value,
+          Image: e.target.value,
         },
       },
     });
@@ -76,16 +76,37 @@ export function CreateModelSection({
     });
   };
 
-  const handleModelDataUrlStringChange = (value: string) =>
+  const handleModelDataUrlStringChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         PrimaryContainer: {
           ...data.Arguments?.PrimaryContainer,
-          ModelDataUrl: value,
+          ModelDataUrl: e.target.value,
         },
       },
     });
+
+  const handleEnvKeyChangeFactory = (prevKey: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newKey = e.target.value;
+    const { [prevKey]: oldVal, ...rest } = environment;
+    update({
+      Arguments: {
+        ...data.Arguments,
+        PrimaryContainer: {
+          ...data.Arguments?.PrimaryContainer,
+          Environment: {
+            ...rest,
+            [newKey]: oldVal,
+          },
+        },
+      },
+    });
+  };
+
+  const handleEnvValueChangeFactory = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleEnvChange(key, e.target.value);
+  };
   return (
     <>
       <div className="right-pane-header">Execution Role</div>
@@ -93,7 +114,7 @@ export function CreateModelSection({
         <input
           {...register('cm.ExecutionRoleArn', { required: 'Required' })}
           value={data.Arguments?.ExecutionRoleArn ?? ''}
-          onChange={(e) => handleExecutionRoleChange(e.target.value)}
+          onChange={handleExecutionRoleChange}
         />
         {showError('cm.ExecutionRoleArn') && (
           <small style={{ color: 'crimson' }}>{showError('cm.ExecutionRoleArn')}</small>
@@ -121,7 +142,7 @@ export function CreateModelSection({
                 ? data.Arguments?.PrimaryContainer?.ModelDataUrl?.Get ?? ''
                 : ''
             }
-            onChange={(e) => handleModelDataUrlGetChange(e.target.value)}
+            onChange={handleModelDataUrlGetChange}
           />
           {showError('cm.ModelDataUrlGet') && (
             <small style={{ color: 'crimson' }}>{showError('cm.ModelDataUrlGet')}</small>
@@ -139,7 +160,7 @@ export function CreateModelSection({
                 ? data.Arguments?.PrimaryContainer?.ModelDataUrl
                 : ''
             }
-            onChange={(e) => handleModelDataUrlStringChange(e.target.value)}
+            onChange={handleModelDataUrlStringChange}
           />
           {showError('cm.ModelDataUrl') && (
             <small style={{ color: 'crimson' }}>{showError('cm.ModelDataUrl')}</small>
@@ -150,7 +171,7 @@ export function CreateModelSection({
       <LabeledField label="Location(ECR URI)">
         <input
           value={data.Arguments?.PrimaryContainer?.Image ?? ''}
-          onChange={(e) => handlePrimaryContainerImageChange(e.target.value)}
+          onChange={handlePrimaryContainerImageChange}
         />
       </LabeledField>
       <LabeledField label="Environment">
@@ -161,28 +182,13 @@ export function CreateModelSection({
                 className="env-key-input"
                 type="text"
                 value={key}
-                onChange={(e) => {
-                  const newKey = e.target.value;
-                  const { [key]: oldVal, ...rest } = environment;
-                  update({
-                    Arguments: {
-                      ...data.Arguments,
-                      PrimaryContainer: {
-                        ...data.Arguments?.PrimaryContainer,
-                        Environment: {
-                          ...rest,
-                          [newKey]: oldVal,
-                        },
-                      },
-                    },
-                  });
-                }}
+                onChange={handleEnvKeyChangeFactory(key)}
               />
               <input
                 className="env-value-input"
                 type="text"
                 value={value}
-                onChange={(e) => handleEnvChange(key, e.target.value)}
+                onChange={handleEnvValueChangeFactory(key)}
               />
               <button className="delete-env" onClick={() => handleDeleteEnv(key)}>
                 ❌

@@ -150,6 +150,27 @@ export const PropertiesPanel = memo(function PropertiesPanel({
     });
   };
 
+  const handleHyperParamKeyChangeFactory = (prevKey: string) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (data.kind !== 'trainModel') return;
+    const newKey = e.target.value;
+    const { [prevKey]: oldVal, ...rest } = hyperParameters;
+    update({
+      Arguments: {
+        ...data.Arguments,
+        HyperParameters: {
+          ...rest,
+          [newKey]: oldVal,
+        },
+      },
+    } as any);
+  };
+
+  const handleHyperParamValueChangeFactory = (key: string) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => handleHyperParamChange(key, e.target.value);
+
   const addEntrypoints = () => {
     if (data.kind !== 'dataProcess') return;
     const current = data.Arguments?.AppSpecification?.ContainerEntrypoint ?? [];
@@ -327,24 +348,28 @@ export const PropertiesPanel = memo(function PropertiesPanel({
     });
   };
 
+  const handleClose = () => onClose();
+  const handleTabSettings = () => setActiveTab('settings');
+  const handleTabDetails = () => setActiveTab('details');
+
   return (
     <aside className="right-pane">
       <div className="right-pane-header-top">
         {data.label}
-        <button className="close-btn" onClick={onClose}>
+        <button className="close-btn" onClick={handleClose}>
           ✕
         </button>
       </div>
       <div className="right-pane-tabs">
         <button
           className={`tab ${activeTab === 'settings' ? 'is-active' : ''}`}
-          onClick={() => setActiveTab('settings')}
+          onClick={handleTabSettings}
         >
           Settings
         </button>
         <button
           className={`tab ${activeTab === 'details' ? 'is-active' : ''}`}
-          onClick={() => setActiveTab('details')}
+          onClick={handleTabDetails}
         >
           Details
         </button>
@@ -413,25 +438,13 @@ export const PropertiesPanel = memo(function PropertiesPanel({
                         className="env-key-input"
                         type="text"
                         value={key}
-                        onChange={(e) => {
-                          const newKey = e.target.value;
-                          const { [key]: oldVal, ...rest } = hyperParameters;
-                          update({
-                            Arguments: {
-                              ...data.Arguments,
-                              HyperParameters: {
-                                ...rest,
-                                [newKey]: oldVal,
-                              },
-                            },
-                          });
-                        }}
+                        onChange={handleHyperParamKeyChangeFactory(key)}
                       />
                       <input
                         className="env-value-input"
                         type="text"
                         value={value}
-                        onChange={(e) => handleHyperParamChange(key, e.target.value)}
+                        onChange={handleHyperParamValueChangeFactory(key)}
                       />
                       <button className="delete-env" onClick={() => handleDeleteHyperParam(key)}>
                         ❌

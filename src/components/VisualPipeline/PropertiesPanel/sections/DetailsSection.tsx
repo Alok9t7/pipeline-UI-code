@@ -12,15 +12,17 @@ type Props = {
 };
 
 export function DetailsSection({ data, register, showError, update }: Props) {
-  const handleDisplayNameChange = (value: string) => update({ name: value });
-  const handlePipelineNameChange = (value: string) => update({ Name: value } as any);
+  const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    update({ name: e.target.value });
+  const handlePipelineNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    update({ Name: e.target.value } as any);
   return (
     <>
       <LabeledField label="Step type">
         <input value={data.label} disabled readOnly />
       </LabeledField>
       <LabeledField label="Display name">
-        <input value={data.name ?? ''} onChange={(e) => handleDisplayNameChange(e.target.value)} />
+        <input value={data.name ?? ''} onChange={handleDisplayNameChange} />
       </LabeledField>
       <LabeledField label="Pipeline step Name*">
         <input
@@ -29,7 +31,7 @@ export function DetailsSection({ data, register, showError, update }: Props) {
             pattern: { value: nameRegex, message: 'Must match ^[A-Za-z0-9\\-_]{1,64}$' },
           })}
           value={(data as any).Name ?? ''}
-          onChange={(e) => handlePipelineNameChange(e.target.value)}
+          onChange={handlePipelineNameChange}
         />
         {showError('common.Name') && (
           <small style={{ color: 'crimson' }}>{showError('common.Name')}</small>

@@ -16,31 +16,15 @@ export function BatchInferenceSection({
   update,
   s3OrHttpsRegex,
 }: Props) {
-  const handleModelNameChange = (value: string) =>
+  const handleModelNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
-        ModelName: { Get: value },
+        ModelName: { Get: e.target.value },
       },
     });
 
-  const handleTransformInputS3UriChange = (value: string) =>
-    update({
-      Arguments: {
-        ...data.Arguments,
-        TransformInput: {
-          ...data.Arguments?.TransformInput,
-          DataSource: {
-            S3DataSource: {
-              ...data.Arguments?.TransformInput?.DataSource?.S3DataSource,
-              S3Uri: value,
-            },
-          },
-        },
-      },
-    });
-
-  const handleTransformInputS3DataTypeChange = (value: string) =>
+  const handleTransformInputS3UriChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
@@ -49,86 +33,102 @@ export function BatchInferenceSection({
           DataSource: {
             S3DataSource: {
               ...data.Arguments?.TransformInput?.DataSource?.S3DataSource,
-              S3DataType: value,
+              S3Uri: e.target.value,
             },
           },
         },
       },
     });
 
-  const handleTransformInputContentTypeChange = (value: string) =>
+  const handleTransformInputS3DataTypeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         TransformInput: {
           ...data.Arguments?.TransformInput,
-          ContentType: value,
+          DataSource: {
+            S3DataSource: {
+              ...data.Arguments?.TransformInput?.DataSource?.S3DataSource,
+              S3DataType: e.target.value,
+            },
+          },
         },
       },
     });
 
-  const handleTransformInputCompressionTypeChange = (value: string) =>
+  const handleTransformInputContentTypeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         TransformInput: {
           ...data.Arguments?.TransformInput,
-          CompressionType: value,
+          ContentType: e.target.value,
         },
       },
     });
 
-  const handleTransformInputSplitTypeChange = (value: string) =>
+  const handleTransformInputCompressionTypeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         TransformInput: {
           ...data.Arguments?.TransformInput,
-          SplitType: value,
+          CompressionType: e.target.value,
         },
       },
     });
 
-  const handleTransformOutputS3PathChange = (value: string) =>
+  const handleTransformInputSplitTypeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        TransformInput: {
+          ...data.Arguments?.TransformInput,
+          SplitType: e.target.value,
+        },
+      },
+    });
+
+  const handleTransformOutputS3PathChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         TransformOutput: {
           ...data.Arguments?.TransformOutput,
-          S3OutputPath: value,
+          S3OutputPath: e.target.value,
         },
       },
     });
 
-  const handleTransformResourcesInstanceTypeChange = (value: string) =>
+  const handleTransformResourcesInstanceTypeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         TransformResources: {
           ...data.Arguments?.TransformResources,
-          InstanceType: value,
+          InstanceType: e.target.value,
         },
       },
     });
 
-  const handleTransformResourcesInstanceCountChange = (value: string) =>
+  const handleTransformResourcesInstanceCountChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         TransformResources: {
           ...data.Arguments?.TransformResources,
-          InstanceCount: Number(value),
+          InstanceCount: Number(e.target.value),
         },
       },
     });
 
-  const handleDataCaptureDestinationChange = (value: string) =>
+  const handleDataCaptureDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         DataCaptureConfig: {
           ...data.Arguments?.DataCaptureConfig,
-          DestinationS3Uri: value,
+          DestinationS3Uri: e.target.value,
         },
       },
     });
@@ -139,7 +139,7 @@ export function BatchInferenceSection({
         <input
           {...register('dmbi.modelName', { required: 'Required' })}
           value={data.Arguments?.ModelName?.Get ?? ''}
-          onChange={(e) => handleModelNameChange(e.target.value)}
+          onChange={handleModelNameChange}
         />
         {showError('dmbi.modelName') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.modelName')}</small>
@@ -154,7 +154,7 @@ export function BatchInferenceSection({
             maxLength: { value: 1024, message: 'Must be at most 1024 characters' },
           })}
           value={data.Arguments?.TransformInput?.DataSource?.S3DataSource?.S3Uri ?? ''}
-          onChange={(e) => handleTransformInputS3UriChange(e.target.value)}
+          onChange={handleTransformInputS3UriChange}
         />
         {showError('dmbi.s3Uri') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.s3Uri')}</small>
@@ -164,7 +164,7 @@ export function BatchInferenceSection({
         <input
           {...register('dmbi.s3DataType', { required: 'Required' })}
           value={data.Arguments?.TransformInput?.DataSource?.S3DataSource?.S3DataType ?? ''}
-          onChange={(e) => handleTransformInputS3DataTypeChange(e.target.value)}
+          onChange={handleTransformInputS3DataTypeChange}
         />
         {showError('dmbi.s3DataType') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.s3DataType')}</small>
@@ -173,19 +173,19 @@ export function BatchInferenceSection({
       <LabeledField label="Content Type">
         <input
           value={data.Arguments?.TransformInput?.ContentType ?? ''}
-          onChange={(e) => handleTransformInputContentTypeChange(e.target.value)}
+          onChange={handleTransformInputContentTypeChange}
         />
       </LabeledField>
       <LabeledField label="Compression Type">
         <input
           value={data.Arguments?.TransformInput?.CompressionType ?? ''}
-          onChange={(e) => handleTransformInputCompressionTypeChange(e.target.value)}
+          onChange={handleTransformInputCompressionTypeChange}
         />
       </LabeledField>
       <LabeledField label="Split Type">
         <input
           value={data.Arguments?.TransformInput?.SplitType ?? ''}
-          onChange={(e) => handleTransformInputSplitTypeChange(e.target.value)}
+          onChange={handleTransformInputSplitTypeChange}
         />
       </LabeledField>
       <div className="right-pane-header">Transform Output</div>
@@ -197,7 +197,7 @@ export function BatchInferenceSection({
             maxLength: { value: 1024, message: 'Must be at most 1024 characters' },
           })}
           value={data.Arguments?.TransformOutput?.S3OutputPath ?? ''}
-          onChange={(e) => handleTransformOutputS3PathChange(e.target.value)}
+          onChange={handleTransformOutputS3PathChange}
         />
         {showError('dmbi.s3OutputPath') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.s3OutputPath')}</small>
@@ -208,7 +208,7 @@ export function BatchInferenceSection({
         <input
           {...register('dmbi.instanceType', { required: 'Required' })}
           value={data.Arguments?.TransformResources?.InstanceType ?? ''}
-          onChange={(e) => handleTransformResourcesInstanceTypeChange(e.target.value)}
+          onChange={handleTransformResourcesInstanceTypeChange}
         />
         {showError('dmbi.instanceType') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.instanceType')}</small>
@@ -223,7 +223,7 @@ export function BatchInferenceSection({
             valueAsNumber: true,
           })}
           value={data.Arguments?.TransformResources?.InstanceCount ?? 0}
-          onChange={(e) => handleTransformResourcesInstanceCountChange(e.target.value)}
+          onChange={handleTransformResourcesInstanceCountChange}
         />
         {showError('dmbi.instanceCount') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.instanceCount')}</small>
@@ -237,7 +237,7 @@ export function BatchInferenceSection({
             maxLength: { value: 1024, message: 'Must be at most 1024 characters' },
           })}
           value={data.Arguments?.DataCaptureConfig?.DestinationS3Uri ?? ''}
-          onChange={(e) => handleDataCaptureDestinationChange(e.target.value)}
+          onChange={handleDataCaptureDestinationChange}
         />
         {showError('dmbi.dataCaptureDestination') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.dataCaptureDestination')}</small>

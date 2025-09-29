@@ -71,7 +71,7 @@ export function DataProcessSection(props: Props) {
     OutputDataModal,
   } = props;
 
-  const handleInstanceTypeChange = (value: string) =>
+  const handleInstanceTypeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
@@ -79,13 +79,13 @@ export function DataProcessSection(props: Props) {
           ...data.Arguments?.ProcessingResources,
           ClusterConfig: {
             ...data.Arguments?.ProcessingResources?.ClusterConfig,
-            InstanceType: value,
+            InstanceType: e.target.value,
           },
         },
       },
     });
 
-  const handleInstanceCountChange = (value: string) =>
+  const handleInstanceCountChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
@@ -93,13 +93,13 @@ export function DataProcessSection(props: Props) {
           ...data.Arguments?.ProcessingResources,
           ClusterConfig: {
             ...data.Arguments?.ProcessingResources?.ClusterConfig,
-            InstanceCount: Number(value),
+            InstanceCount: Number(e.target.value),
           },
         },
       },
     });
 
-  const handleVolumeSizeChange = (value: string) =>
+  const handleVolumeSizeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
@@ -107,19 +107,19 @@ export function DataProcessSection(props: Props) {
           ...data.Arguments?.ProcessingResources,
           ClusterConfig: {
             ...data.Arguments?.ProcessingResources?.ClusterConfig,
-            VolumeSizeInGB: Number(value),
+            VolumeSizeInGB: Number(e.target.value),
           },
         },
       },
     });
 
-  const handleImageUriChange = (value: string) =>
+  const handleImageUriChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         AppSpecification: {
           ...data.Arguments?.AppSpecification,
-          ImageUri: value,
+          ImageUri: e.target.value,
         },
       },
     });
@@ -186,16 +186,40 @@ export function DataProcessSection(props: Props) {
     });
   };
 
-  const handleStoppingMaxChange = (value: string) =>
+  const handleStoppingMaxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
         ...data.Arguments,
         StoppingCondition: {
           ...data.Arguments?.StoppingCondition,
-          MaxRuntimeInSeconds: Number(value),
+          MaxRuntimeInSeconds: Number(e.target.value),
         },
       },
     });
+
+  
+  const onEditProcessingInputClick = (index: number) => () => handleEditProcessingInput(index);
+  const onDeleteProcessingInputClick = (index: number) => () => handleDeleteProcessingInput(index);
+  const onAddProcessingInputClick = () => {
+    setEditProcessingInputIndex(null);
+    openDatasetsModal();
+  };
+
+  const onEditProcessingOutputClick = (index: number) => () => handleEditProcessingOutput(index);
+  const onDeleteProcessingOutputClick = (index: number) => () =>
+    handleDeleteProcessingOutput(index);
+  const onAddProcessingOutputClick = () => {
+    setEditProcessingOutputIndex(null);
+    openOutputModal();
+  };
+
+  
+  const onEntrypointChange = (idx: number) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleEntrypointChange(idx, e.target.value);
+  const onEntrypointDeleteClick = (idx: number) => () => handleEntrypointDelete(idx);
+  const onContainerArgChange = (idx: number) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleContainerArgChange(idx, e.target.value);
+  const onContainerArgDeleteClick = (idx: number) => () => handleContainerArgDelete(idx);
 
   return (
     <>
@@ -204,7 +228,7 @@ export function DataProcessSection(props: Props) {
         <input
           {...register('dp.InstanceType', { required: 'Required' })}
           value={data.Arguments?.ProcessingResources?.ClusterConfig?.InstanceType ?? ''}
-          onChange={(e) => handleInstanceTypeChange(e.target.value)}
+          onChange={handleInstanceTypeChange}
         />
         {showError('dp.InstanceType') && (
           <small style={{ color: 'crimson' }}>{showError('dp.InstanceType')}</small>
@@ -219,7 +243,7 @@ export function DataProcessSection(props: Props) {
             valueAsNumber: true,
           })}
           value={data.Arguments?.ProcessingResources?.ClusterConfig?.InstanceCount ?? 0}
-          onChange={(e) => handleInstanceCountChange(e.target.value)}
+          onChange={handleInstanceCountChange}
         />
         {showError('dp.InstanceCount') && (
           <small style={{ color: 'crimson' }}>{showError('dp.InstanceCount')}</small>
@@ -234,7 +258,7 @@ export function DataProcessSection(props: Props) {
             valueAsNumber: true,
           })}
           value={data.Arguments?.ProcessingResources?.ClusterConfig?.VolumeSizeInGB ?? 0}
-          onChange={(e) => handleVolumeSizeChange(e.target.value)}
+          onChange={handleVolumeSizeChange}
         />
         {showError('dp.VolumeSizeInGB') && (
           <small style={{ color: 'crimson' }}>{showError('dp.VolumeSizeInGB')}</small>
@@ -254,20 +278,15 @@ export function DataProcessSection(props: Props) {
               <div key={idx} className="dataset-item">
                 <p className="dataset-name">{inp.InputName}</p>
                 <div className="dataset-item-actions">
-                  <button onClick={() => handleEditProcessingInput(idx)}>&#9998;</button>
-                  <button onClick={() => handleDeleteProcessingInput(idx)}>X</button>
+                  <button onClick={onEditProcessingInputClick(idx)}>&#9998;</button>
+                  <button onClick={onDeleteProcessingInputClick(idx)}>X</button>
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        <button
-          onClick={() => {
-            setEditProcessingInputIndex(null);
-            openDatasetsModal();
-          }}
-        >
+        <button onClick={onAddProcessingInputClick}>
           Add
         </button>
       </div>
@@ -300,20 +319,15 @@ export function DataProcessSection(props: Props) {
               <div key={idx} className="dataset-item">
                 <p className="dataset-name">{out.OutputName}</p>
                 <div className="dataset-item-actions">
-                  <button onClick={() => handleEditProcessingOutput(idx)}>&#9998;</button>
-                  <button onClick={() => handleDeleteProcessingOutput(idx)}>X</button>
+                  <button onClick={onEditProcessingOutputClick(idx)}>&#9998;</button>
+                  <button onClick={onDeleteProcessingOutputClick(idx)}>X</button>
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        <button
-          onClick={() => {
-            setEditProcessingOutputIndex(null);
-            openOutputModal();
-          }}
-        >
+        <button onClick={onAddProcessingOutputClick}>
           Add
         </button>
       </div>
@@ -342,7 +356,7 @@ export function DataProcessSection(props: Props) {
         <input
           {...register('dp.ImageUri', { required: 'Required' })}
           value={data.Arguments?.AppSpecification?.ImageUri ?? ''}
-          onChange={(e) => handleImageUriChange(e.target.value)}
+          onChange={handleImageUriChange}
         />
         {showError('dp.ImageUri') && (
           <small style={{ color: 'crimson' }}>{showError('dp.ImageUri')}</small>
@@ -356,11 +370,11 @@ export function DataProcessSection(props: Props) {
                 className="entrypoint-input"
                 type="text"
                 value={entry}
-                onChange={(e) => handleEntrypointChange(idx, e.target.value)}
+                onChange={onEntrypointChange(idx)}
               />
               <button
                 className="delete-entrypoint"
-                onClick={() => handleEntrypointDelete(idx)}
+                onClick={onEntrypointDeleteClick(idx)}
               >
                 ❌
               </button>
@@ -379,11 +393,11 @@ export function DataProcessSection(props: Props) {
                 className="entrypoint-input"
                 type="text"
                 value={arg}
-                onChange={(e) => handleContainerArgChange(idx, e.target.value)}
+                onChange={onContainerArgChange(idx)}
               />
               <button
                 className="delete-entrypoint"
-                onClick={() => handleContainerArgDelete(idx)}
+                onClick={onContainerArgDeleteClick(idx)}
               >
                 ❌
               </button>
@@ -403,7 +417,7 @@ export function DataProcessSection(props: Props) {
             valueAsNumber: true,
           })}
           value={data.Arguments?.StoppingCondition?.MaxRuntimeInSeconds ?? 0}
-          onChange={(e) => handleStoppingMaxChange(e.target.value)}
+          onChange={handleStoppingMaxChange}
         />
         {showError('dp.MaxRuntimeInSeconds') && (
           <small style={{ color: 'crimson' }}>{showError('dp.MaxRuntimeInSeconds')}</small>
