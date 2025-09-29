@@ -65,12 +65,19 @@ export function validateCreateModel(data: CreateModelData): ValidationResult {
       if (!pc.ModelDataUrl) {
         push(errors, PATH.cm.modelDataUrl, MSG.required('ModelDataUrl'));
       } else {
-        const val = pc.ModelDataUrl.Get;
-        if (val == null || val === '') {
-          push(errors, PATH.cm.modelDataUrlGet, MSG.required('ModelDataUrl.Get'));
+        if (typeof pc.ModelDataUrl === 'string') {
+          const val = pc.ModelDataUrl;
+          if (val === '') push(errors, PATH.cm.modelDataUrl, MSG.required('ModelDataUrl'));
+          else if (!s3OrHttpsRegex.test(val)) push(errors, PATH.cm.modelDataUrl, MSG.uri);
+          else if (val.length > 1024) push(errors, PATH.cm.modelDataUrl, MSG.maxLen(1024));
         } else {
-          // if (!s3OrHttpsRegex.test(val)) push(errors, PATH.cm.modelDataUrlGet, MSG.uri);
-          if (val.length > 1024) push(errors, PATH.cm.modelDataUrlGet, MSG.maxLen(1024));
+          const val = pc.ModelDataUrl.Get;
+          if (val == null || val === '') {
+            push(errors, PATH.cm.modelDataUrlGet, MSG.required('ModelDataUrl.Get'));
+          } else {
+            // if (!s3OrHttpsRegex.test(val)) push(errors, PATH.cm.modelDataUrlGet, MSG.uri);
+            if (val.length > 1024) push(errors, PATH.cm.modelDataUrlGet, MSG.maxLen(1024));
+          }
         }
       }
     } else {

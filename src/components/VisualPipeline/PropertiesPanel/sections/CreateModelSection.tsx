@@ -51,6 +51,41 @@ export function CreateModelSection({
         },
       },
     });
+
+  const modelDataUrlMode: 'step' | 'string' =
+    typeof data.Arguments?.PrimaryContainer?.ModelDataUrl === 'string' ? 'string' : 'step';
+
+  const handleModelDataUrlModeChange = (mode: 'step' | 'string') => {
+    const current = data.Arguments?.PrimaryContainer?.ModelDataUrl;
+    let nextValue: any;
+    if (mode === 'step') {
+      const existing = typeof current === 'object' && current?.Get ? current.Get : '';
+      nextValue = { Get: existing };
+    } else {
+      const existing = typeof current === 'string' ? current : '';
+      nextValue = existing;
+    }
+    update({
+      Arguments: {
+        ...data.Arguments,
+        PrimaryContainer: {
+          ...data.Arguments?.PrimaryContainer,
+          ModelDataUrl: nextValue,
+        },
+      },
+    });
+  };
+
+  const handleModelDataUrlStringChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        PrimaryContainer: {
+          ...data.Arguments?.PrimaryContainer,
+          ModelDataUrl: value,
+        },
+      },
+    });
   return (
     <>
       <div className="right-pane-header">Execution Role</div>
@@ -65,20 +100,52 @@ export function CreateModelSection({
         )}
       </LabeledField>
       <div className="right-pane-header">Model (Input)</div>
-      <LabeledField label="Location(S3 URI)*">
-        <input
-          {...register('cm.ModelDataUrlGet', {
-            required: 'Required',
-            // pattern: { value: s3OrHttpsRegex, message: 'Must be https:// or s3:// URI' },
-            maxLength: { value: 1024, message: 'Must be at most 1024 characters' },
-          })}
-          value={data.Arguments?.PrimaryContainer?.ModelDataUrl?.Get ?? ''}
-          onChange={(e) => handleModelDataUrlGetChange(e.target.value)}
-        />
-        {showError('cm.ModelDataUrlGet') && (
-          <small style={{ color: 'crimson' }}>{showError('cm.ModelDataUrlGet')}</small>
-        )}
+      <LabeledField label="Source type">
+        <select
+          value={modelDataUrlMode}
+          onChange={(e) => handleModelDataUrlModeChange(e.target.value as 'step' | 'string')}
+        >
+          <option value="step">Step variable</option>
+          <option value="string">String</option>
+        </select>
       </LabeledField>
+      {modelDataUrlMode === 'step' ? (
+        <LabeledField label="Step variable (e.g. Steps.Training.ModelArtifacts.S3ModelArtifacts)*">
+          <input
+            {...register('cm.ModelDataUrlGet', {
+              required: 'Required',
+              maxLength: { value: 1024, message: 'Must be at most 1024 characters' },
+            })}
+            value={
+              typeof data.Arguments?.PrimaryContainer?.ModelDataUrl === 'object'
+                ? data.Arguments?.PrimaryContainer?.ModelDataUrl?.Get ?? ''
+                : ''
+            }
+            onChange={(e) => handleModelDataUrlGetChange(e.target.value)}
+          />
+          {showError('cm.ModelDataUrlGet') && (
+            <small style={{ color: 'crimson' }}>{showError('cm.ModelDataUrlGet')}</small>
+          )}
+        </LabeledField>
+      ) : (
+        <LabeledField label="S3 URI*">
+          <input
+            {...register('cm.ModelDataUrl', {
+              required: 'Required',
+              maxLength: { value: 1024, message: 'Must be at most 1024 characters' },
+            })}
+            value={
+              typeof data.Arguments?.PrimaryContainer?.ModelDataUrl === 'string'
+                ? data.Arguments?.PrimaryContainer?.ModelDataUrl
+                : ''
+            }
+            onChange={(e) => handleModelDataUrlStringChange(e.target.value)}
+          />
+          {showError('cm.ModelDataUrl') && (
+            <small style={{ color: 'crimson' }}>{showError('cm.ModelDataUrl')}</small>
+          )}
+        </LabeledField>
+      )}
       <div className="right-pane-header">Container</div>
       <LabeledField label="Location(ECR URI)">
         <input

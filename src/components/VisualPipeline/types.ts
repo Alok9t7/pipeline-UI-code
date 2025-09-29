@@ -106,7 +106,7 @@ export type CreateModelData = BaseNodeData & {
     ExecutionRoleArn: string;
     PrimaryContainer: {
       Image: string;
-      ModelDataUrl: {
+      ModelDataUrl: string | {
         Get: string;
       };
       Environment?: Record<string, string>;

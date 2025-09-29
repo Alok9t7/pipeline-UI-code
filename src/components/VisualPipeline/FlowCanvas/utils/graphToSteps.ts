@@ -241,18 +241,18 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
       Name: endpointConfigName,
       Type: 'EndpointConfig',
       Arguments: {
-        ProductionVariants: productionVariants.map((v: any) => ({
-          InitialInstanceCount: v.InitialInstanceCount,
-          ...(v.ManagedInstanceScaling?.MaxInstanceCount != null
+        ProductionVariants: productionVariants.map((variant: any) => ({
+          InitialInstanceCount: variant.InitialInstanceCount,
+          ...(variant.ManagedInstanceScaling?.MaxInstanceCount != null
             ? {
                 ManagedInstanceScaling: {
-                  MaxInstanceCount: v.ManagedInstanceScaling.MaxInstanceCount,
+                  MaxInstanceCount: variant.ManagedInstanceScaling.MaxInstanceCount,
                 },
               }
             : {}),
-          InstanceType: v.InstanceType,
-          ModelName: v.ModelName,
-          VariantName: v.VariantName,
+          InstanceType: variant.InstanceType,
+          ModelName: variant.ModelName,
+          VariantName: variant.VariantName,
         })),
       },
       VirtualStepName: baseName,
