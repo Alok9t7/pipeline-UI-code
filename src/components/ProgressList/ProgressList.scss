@@ -1,0 +1,16 @@
+.upload-status {
+  margin-top: 20px;
+}
+
+.upload-progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.upload-progress-bar progress {
+  width: 200px;
+  height: 14px;
+}

@@ -1,0 +1,229 @@
+.upload-dataset {
+  padding: 20px;
+  background-color: #f6f6f6;
+  border: none;
+  border-radius: 6px;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 0;
+  }
+
+  .title {
+    font-family: 'Archivo', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--Color-Component-Texts-body, #a50064);
+    margin: 0px !important;
+  }
+
+  .steps {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+
+    .step {
+      color: #999;
+
+      &.active {
+        color: #a50064; // highlight color
+        font-weight: 600;
+      }
+    }
+  }
+
+  .tabs {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+
+    .tab {
+      cursor: pointer;
+      padding-bottom: 4px;
+
+      &.active {
+        border-bottom: 2px solid #a50064;
+        font-weight: 600;
+        color: #a50064;
+      }
+    }
+  }
+
+  .content {
+    display: flex;
+    gap: 20px;
+
+    .left {
+      flex: 1;
+
+      .upload-box {
+        border: 2px dashed #ccc;
+        border-radius: 6px;
+        padding: 30px;
+        text-align: center;
+        margin-bottom: 20px;
+        min-height: 70px;
+        background-color: #f6f6f6;
+
+        .upload-link {
+          color: #1976d2;
+          text-decoration: underline;
+          cursor: pointer;
+          font-weight: 500;
+
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+
+      .files {
+        border: 1px solid #eee;
+        border-radius: 6px;
+        min-height: 450px !important;
+        overflow-y: auto;
+        background-color: #ffffff;
+
+        .files-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px;
+          font-weight: 500;
+          border-bottom: 1px solid #eee;
+        }
+
+        .file-actions {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            input[type='checkbox'] {
+              margin: 0;
+              transform: translateY(-1px);
+              accent-color: #a50064;
+            }
+          }
+        }
+
+        .files-list {
+          column-count: 2; // or 3
+          column-gap: 16px;
+          min-height: 100px !important;
+          max-height: 250px;
+          overflow-y: auto;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        .file-item {
+          break-inside: avoid;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 4px;
+          padding-left: 24px;
+          margin-bottom: 8px;
+          background: #f9f9f9;
+          border-radius: 4px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          input[type='checkbox'] {
+            margin: 0;
+            transform: translateY(-1px);
+            accent-color: #a50064;
+          }
+        }
+      }
+    }
+
+    .right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .preview {
+        max-width: 100%;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+
+    .btn-outline {
+      border: 1px solid #a50064;
+      padding: 8px 16px;
+      border-radius: 6px;
+      color: #a50064;
+      background: white;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #a50064;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center; // ✅ aligns image and text vertically
+    gap: 8px; // ✅ space between text and icon
+    padding: 10px 16px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    background-color: white;
+    color: #333;
+    border-radius: 6px;
+    cursor: pointer;
+
+    img {
+      height: 20px; // or use your .h-6 class (24px)
+      width: auto;
+    }
+  }
+}
+
+.drag-drop-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: var(--font-size-1);
+  line-height: 100%;
+  letter-spacing: var(--font-letter-spacing-8);
+  text-align: center;
+  vertical-align: middle;
+  color: #757575;
+}
+
+.files-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: var(--font-size-3);
+  line-height: 100%;
+  letter-spacing: 0.1px;
+  vertical-align: middle;
+  color: #757575;
+}

@@ -1,0 +1,181 @@
+.start-labeling-btn {
+  padding: 10px 20px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.start-labeling-btn:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+/* Smooth scroll for the whole app */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Container */
+.flow-root {
+  position: relative;
+}
+
+/* Sticky stepper header */
+.step-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: linear-gradient(180deg, #ffffff 80%, rgba(255, 255, 255, 0));
+  backdrop-filter: saturate(1.1) blur(4px);
+  border-bottom: 1px solid #eef1f6;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+/* Stepper */
+.stepper {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+}
+
+.stepper-item {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 14px;
+  user-select: none;
+}
+
+.stepper-item .stepper-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 2px solid #cfd6e4;
+  background: #fff;
+  cursor: pointer;
+}
+.stepper-item.done .stepper-dot {
+  background: #2f6bff;
+  border-color: #2f6bff;
+}
+.stepper-item.active .stepper-dot {
+  background: #fff;
+  border-color: #2f6bff;
+  box-shadow: 0 0 0 4px rgba(47, 107, 255, 0.15);
+}
+.stepper-item .stepper-label {
+  cursor: pointer;
+}
+.stepper-item.active .stepper-label {
+  color: #111827;
+}
+.stepper-item.done .stepper-label {
+  color: #334155;
+}
+
+/* Header actions */
+.stepper-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Section layout */
+.sections {
+  scroll-padding-top: 76px; /* leaves space under sticky header when using anchors */
+}
+
+.step-section {
+  min-height: calc(100vh - 76px); /* “page” feel below sticky header */
+  padding: 18px 8px 40px;
+  display: grid;
+  align-items: start;
+}
+
+/* Titles / helpers */
+.step-title {
+  margin: 4px 0 10px;
+}
+
+.help {
+  color: #5a6475;
+  margin-bottom: 16px;
+}
+
+/* Card polish */
+.card {
+  background: #fff;
+  border: 1px solid #e9edf6;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  padding: 16px;
+}
+
+/* Section CTA row */
+.step-cta {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+/* UploadForm.css */
+.step-section {
+  /* adjust 72px to your sticky header height */
+  min-height: calc(100vh - 72px);
+  scroll-margin-top: 72px; /* so scrollIntoView doesn’t hide the title under the header */
+}
+
+.main-content > * {
+  // max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Buttons (matches previous inline styles) */
+.btn {
+  background: #2f6bff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn:hover {
+  filter: brightness(0.98);
+}
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn.btn-secondary {
+  background: #fff;
+  color: #334155;
+  border: 1px solid #dfe4ee;
+}
+
+/* Keep your existing .inference-card, top-k bars, etc., from before */
+.step-section {
+  min-height: calc(100vh - 120px); /* full viewport minus header height */
+  display: flex;
+  align-items: center; /* vertical center */
+  justify-content: center; /* horizontal center */
+}
+
+.step-section .card {
+  width: 100%;
+  // max-width: 800px; /* keep it readable */
+  margin: 0 auto;
+}
