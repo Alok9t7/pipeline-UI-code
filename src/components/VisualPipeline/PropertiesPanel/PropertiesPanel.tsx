@@ -1,14 +1,12 @@
 import type { Node } from '@xyflow/react';
 import { memo, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-
-import { LabeledField } from '../LabeledField/LabeledField';
 import '../VisualPipeline.scss';
 import { AddDataSetsModal } from '../modals/AddDataSetsModal';
 import { OutputDataModal } from '../modals/OutputDataModal';
 import { TrainDatasetsInputModal } from '../modals/TrainDatasetsInputModal';
 import type { AppNodeData } from '../types';
-import { nameRegex, s3OrHttpsRegex } from '../validation';
+import { s3OrHttpsRegex } from '../validation';
 import { BatchInferenceSection } from './sections/BatchInferenceSection';
 import { CreateModelSection } from './sections/CreateModelSection';
 import { DataProcessSection } from './sections/DataProcessSection';

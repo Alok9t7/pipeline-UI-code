@@ -9,6 +9,55 @@ type Props = {
 };
 
 export function DeployEndpointSection({ data, register, showError, update }: Props) {
+  const ensurePv = (overrides: Partial<any>) => {
+    const current = (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0] ?? {};
+    const pv = [
+      {
+        InitialInstanceCount: current.InitialInstanceCount ?? 1,
+        ManagedInstanceScaling: current.ManagedInstanceScaling ?? {},
+        InstanceType: current.InstanceType ?? '',
+        ModelName: current.ModelName ?? { Get: '' },
+        VariantName: current.VariantName ?? 'AllTraffic',
+        ...overrides,
+      },
+    ];
+    update({
+      Arguments: {
+        ...(data as any).Arguments,
+        EndpointConfig: {
+          ProductionVariants: pv,
+        },
+      },
+    } as any);
+  };
+
+  const handleEndpointNameChange = (value: string) =>
+    update({
+      Arguments: {
+        ...(data as any).Arguments,
+        EndpointName: value,
+      },
+    } as any);
+
+  const handlePvInstanceTypeChange = (value: string) =>
+    ensurePv({ InstanceType: value });
+
+  const handlePvInitialInstanceCountChange = (value: string) =>
+    ensurePv({ InitialInstanceCount: Number(value) });
+
+  const handlePvMaxInstanceCountChange = (value: string) =>
+    ensurePv({
+      ManagedInstanceScaling: {
+        ...((data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.ManagedInstanceScaling ?? {}),
+        MaxInstanceCount: Number(value),
+      },
+    });
+
+  const handlePvModelNameGetChange = (value: string) =>
+    ensurePv({ ModelName: { Get: value } });
+
+  const handlePvVariantNameChange = (value: string) =>
+    ensurePv({ VariantName: value });
   return (
     <>
       <div className="right-pane-header">Endpoint</div>
@@ -16,14 +65,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
         <input
           {...register('dme.endpointName', { required: 'Required' })}
           value={(data as any).Arguments?.EndpointName ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...(data as any).Arguments,
-                EndpointName: e.target.value,
-              },
-            } as any)
-          }
+          onChange={(e) => handleEndpointNameChange(e.target.value)}
         />
         {showError('dme.endpointName') && (
           <small style={{ color: 'crimson' }}>{showError('dme.endpointName')}</small>
@@ -36,34 +78,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
           value={
             (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.InstanceType ?? ''
           }
-          onChange={(e) => {
-            const pv = [
-              {
-                InitialInstanceCount:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
-                    ?.InitialInstanceCount ?? 1,
-                ManagedInstanceScaling:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
-                    ?.ManagedInstanceScaling ?? {},
-                InstanceType: e.target.value,
-                ModelName: (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
-                  ?.ModelName ?? {
-                  Get: '',
-                },
-                VariantName:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.VariantName ??
-                  'AllTraffic',
-              },
-            ];
-            update({
-              Arguments: {
-                ...(data as any).Arguments,
-                EndpointConfig: {
-                  ProductionVariants: pv,
-                },
-              },
-            } as any);
-          }}
+          onChange={(e) => handlePvInstanceTypeChange(e.target.value)}
         />
         {showError('dme.pvInstanceType0') && (
           <small style={{ color: 'crimson' }}>{showError('dme.pvInstanceType0')}</small>
@@ -77,34 +92,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
             (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
               ?.InitialInstanceCount ?? 1
           }
-          onChange={(e) => {
-            const pv = [
-              {
-                InitialInstanceCount: Number(e.target.value),
-                ManagedInstanceScaling:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
-                    ?.ManagedInstanceScaling ?? {},
-                InstanceType:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.InstanceType ??
-                  '',
-                ModelName: (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
-                  ?.ModelName ?? {
-                  Get: '',
-                },
-                VariantName:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.VariantName ??
-                  'AllTraffic',
-              },
-            ];
-            update({
-              Arguments: {
-                ...(data as any).Arguments,
-                EndpointConfig: {
-                  ProductionVariants: pv,
-                },
-              },
-            } as any);
-          }}
+          onChange={(e) => handlePvInitialInstanceCountChange(e.target.value)}
         />
         {showError('dme.pvInitial0') && (
           <small style={{ color: 'crimson' }}>{showError('dme.pvInitial0')}</small>
@@ -118,29 +106,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
             (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.ManagedInstanceScaling
               ?.MaxInstanceCount ?? ''
           }
-          onChange={(e) => {
-            const current = (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0] ?? {};
-            const pv = [
-              {
-                InitialInstanceCount: current.InitialInstanceCount ?? 1,
-                ManagedInstanceScaling: {
-                  ...(current.ManagedInstanceScaling ?? {}),
-                  MaxInstanceCount: Number(e.target.value),
-                },
-                InstanceType: current.InstanceType ?? '',
-                ModelName: current.ModelName ?? { Get: '' },
-                VariantName: current.VariantName ?? 'AllTraffic',
-              },
-            ];
-            update({
-              Arguments: {
-                ...(data as any).Arguments,
-                EndpointConfig: {
-                  ProductionVariants: pv,
-                },
-              },
-            } as any);
-          }}
+          onChange={(e) => handlePvMaxInstanceCountChange(e.target.value)}
         />
         {showError('dme.pvMax0') && (
           <small style={{ color: 'crimson' }}>{showError('dme.pvMax0')}</small>
@@ -152,33 +118,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
           value={
             (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.ModelName?.Get ?? ''
           }
-          onChange={(e) => {
-            const pv = [
-              {
-                InitialInstanceCount:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
-                    ?.InitialInstanceCount ?? 1,
-                ManagedInstanceScaling:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
-                    ?.ManagedInstanceScaling ?? {},
-                InstanceType:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.InstanceType ??
-                  '',
-                ModelName: { Get: e.target.value },
-                VariantName:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.VariantName ??
-                  'AllTraffic',
-              },
-            ];
-            update({
-              Arguments: {
-                ...(data as any).Arguments,
-                EndpointConfig: {
-                  ProductionVariants: pv,
-                },
-              },
-            } as any);
-          }}
+          onChange={(e) => handlePvModelNameGetChange(e.target.value)}
         />
         {showError('dme.pvModelNameGet0') && (
           <small style={{ color: 'crimson' }}>{showError('dme.pvModelNameGet0')}</small>
@@ -191,34 +131,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
             (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.VariantName ??
             'AllTraffic'
           }
-          onChange={(e) => {
-            const pv = [
-              {
-                InitialInstanceCount:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
-                    ?.InitialInstanceCount ?? 1,
-                ManagedInstanceScaling:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
-                    ?.ManagedInstanceScaling ?? {},
-                InstanceType:
-                  (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.InstanceType ??
-                  '',
-                ModelName: (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
-                  ?.ModelName ?? {
-                  Get: '',
-                },
-                VariantName: e.target.value,
-              },
-            ];
-            update({
-              Arguments: {
-                ...(data as any).Arguments,
-                EndpointConfig: {
-                  ProductionVariants: pv,
-                },
-              },
-            } as any);
-          }}
+          onChange={(e) => handlePvVariantNameChange(e.target.value)}
         />
         {showError('dme.pvVariantName0') && (
           <small style={{ color: 'crimson' }}>{showError('dme.pvVariantName0')}</small>

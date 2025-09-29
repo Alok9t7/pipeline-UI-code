@@ -147,10 +147,6 @@ export type DeployModelBatchInferenceData = BaseNodeData & {
     DataCaptureConfig?: {
       DestinationS3Uri: string;
     };
-    // Environment?: Record<string, string>;
-    // MaxConcurrentTransforms?: number;
-    // MaxPayloadInMB?: number;
-    // BatchStrategy?: string;
   };
 };
 

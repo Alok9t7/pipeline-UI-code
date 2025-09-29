@@ -44,6 +44,91 @@ export function TrainModelSection(props: Props) {
     s3OrHttpsRegex,
   } = props;
 
+  const handleS3OutputPathChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        OutputDataConfig: {
+          ...data.Arguments?.OutputDataConfig,
+          S3OutputPath: value,
+        },
+      },
+    });
+
+  const handleTrainingImageChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        AlgorithmSpecification: {
+          ...data.Arguments?.AlgorithmSpecification,
+          TrainingImage: value,
+        },
+      },
+    });
+
+  const handleTrainingInputModeChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        AlgorithmSpecification: {
+          ...data.Arguments?.AlgorithmSpecification,
+          TrainingInputMode: value,
+        },
+      },
+    });
+
+  const handleRoleArnChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        RoleArn: value,
+      },
+    });
+
+  const handleRcInstanceTypeChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        ResourceConfig: {
+          ...data.Arguments?.ResourceConfig,
+          InstanceType: value,
+        },
+      },
+    });
+
+  const handleRcInstanceCountChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        ResourceConfig: {
+          ...data.Arguments?.ResourceConfig,
+          InstanceCount: Number(value),
+        },
+      },
+    });
+
+  const handleRcVolumeSizeChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        ResourceConfig: {
+          ...data.Arguments?.ResourceConfig,
+          VolumeSizeInGB: Number(value),
+        },
+      },
+    });
+
+  const handleStoppingMaxChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        StoppingCondition: {
+          ...data.Arguments?.StoppingCondition,
+          MaxRuntimeInSeconds: Number(value),
+        },
+      },
+    });
+
   return (
     <>
       <div className="right-pane-header">Dataset (Input)</div>
@@ -113,17 +198,7 @@ export function TrainModelSection(props: Props) {
             },
           })}
           value={data.Arguments?.OutputDataConfig?.S3OutputPath ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                OutputDataConfig: {
-                  ...data.Arguments?.OutputDataConfig,
-                  S3OutputPath: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleS3OutputPathChange(e.target.value)}
         />
         {showError('tm.S3OutputPath') && (
           <small style={{ color: 'crimson' }}>{showError('tm.S3OutputPath')}</small>
@@ -134,17 +209,7 @@ export function TrainModelSection(props: Props) {
         <input
           {...register('tm.TrainingImage', { required: 'Required' })}
           value={data.Arguments?.AlgorithmSpecification?.TrainingImage ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                AlgorithmSpecification: {
-                  ...data.Arguments?.AlgorithmSpecification,
-                  TrainingImage: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleTrainingImageChange(e.target.value)}
         />
         {showError('tm.TrainingImage') && (
           <small style={{ color: 'crimson' }}>{showError('tm.TrainingImage')}</small>
@@ -154,17 +219,7 @@ export function TrainModelSection(props: Props) {
         <input
           {...register('tm.TrainingInputMode', { required: 'Required' })}
           value={data.Arguments?.AlgorithmSpecification?.TrainingInputMode ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                AlgorithmSpecification: {
-                  ...data.Arguments?.AlgorithmSpecification,
-                  TrainingInputMode: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleTrainingInputModeChange(e.target.value)}
         />
         {showError('tm.TrainingInputMode') && (
           <small style={{ color: 'crimson' }}>{showError('tm.TrainingInputMode')}</small>
@@ -174,14 +229,7 @@ export function TrainModelSection(props: Props) {
       <LabeledField label="IAM Role">
         <input
           value={data.Arguments?.RoleArn ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                RoleArn: e.target.value,
-              },
-            })
-          }
+          onChange={(e) => handleRoleArnChange(e.target.value)}
         />
       </LabeledField>
       <div className="right-pane-header">Instance</div>
@@ -189,17 +237,7 @@ export function TrainModelSection(props: Props) {
         <input
           {...register('tm.InstanceType', { required: 'Required' })}
           value={data.Arguments?.ResourceConfig?.InstanceType ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                ResourceConfig: {
-                  ...data.Arguments?.ResourceConfig,
-                  InstanceType: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleRcInstanceTypeChange(e.target.value)}
         />
         {showError('tm.InstanceType') && (
           <small style={{ color: 'crimson' }}>{showError('tm.InstanceType')}</small>
@@ -214,17 +252,7 @@ export function TrainModelSection(props: Props) {
             valueAsNumber: true,
           })}
           value={data.Arguments?.ResourceConfig?.InstanceCount ?? 0}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                ResourceConfig: {
-                  ...data.Arguments?.ResourceConfig,
-                  InstanceCount: Number(e.target.value),
-                },
-              },
-            })
-          }
+          onChange={(e) => handleRcInstanceCountChange(e.target.value)}
         />
         {showError('tm.InstanceCount') && (
           <small style={{ color: 'crimson' }}>{showError('tm.InstanceCount')}</small>
@@ -239,17 +267,7 @@ export function TrainModelSection(props: Props) {
             valueAsNumber: true,
           })}
           value={data.Arguments?.ResourceConfig?.VolumeSizeInGB ?? 0}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                ResourceConfig: {
-                  ...data.Arguments?.ResourceConfig,
-                  VolumeSizeInGB: Number(e.target.value),
-                },
-              },
-            })
-          }
+          onChange={(e) => handleRcVolumeSizeChange(e.target.value)}
         />
         {showError('tm.VolumeSizeInGB') && (
           <small style={{ color: 'crimson' }}>{showError('tm.VolumeSizeInGB')}</small>
@@ -265,17 +283,7 @@ export function TrainModelSection(props: Props) {
             valueAsNumber: true,
           })}
           value={data.Arguments?.StoppingCondition?.MaxRuntimeInSeconds ?? 0}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                StoppingCondition: {
-                  ...data.Arguments?.StoppingCondition,
-                  MaxRuntimeInSeconds: Number(e.target.value),
-                },
-              },
-            })
-          }
+          onChange={(e) => handleStoppingMaxChange(e.target.value)}
         />
         {showError('tm.MaxRuntimeInSeconds') && (
           <small style={{ color: 'crimson' }}>{showError('tm.MaxRuntimeInSeconds')}</small>

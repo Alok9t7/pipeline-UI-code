@@ -1,4 +1,11 @@
+// Abbreviation legend for path groups:
+// - cm: Create Model
+// - dp: Data Process
+// - tm: Train Model
+// - dmbi: Deploy Model Batch Inference
+// - dme: Deploy Model Endpoint
 export const PATH = {
+  // Create Model
   cm: {
     name: 'Name',
     type: 'Type',
@@ -9,6 +16,7 @@ export const PATH = {
     modelDataUrlGet: 'Arguments.PrimaryContainer.ModelDataUrl.Get',
     dependsOn: (i: number) => `DependsOn[${i}]`,
   },
+  // Data Process
   dp: {
     name: 'Name',
     type: 'Type',
@@ -36,6 +44,7 @@ export const PATH = {
       `Arguments.ProcessingOutputConfig.Outputs[${i}].S3Output.S3UploadMode`,
     stoppingMax: 'Arguments.StoppingCondition.MaxRuntimeInSeconds',
   },
+  // Train Model
   tm: {
     name: 'Name',
     type: 'Type',
@@ -57,6 +66,7 @@ export const PATH = {
     stoppingMax: 'Arguments.StoppingCondition.MaxRuntimeInSeconds',
     dependsOn: (i: number) => `DependsOn[${i}]`,
   },
+  // Deploy Model Batch Inference
   dmbi: {
     name: 'Name',
     type: 'Type',
@@ -77,6 +87,7 @@ export const PATH = {
     dataCaptureDestination: 'Arguments.DataCaptureConfig.DestinationS3Uri',
     dependsOn: (i: number) => `DependsOn[${i}]`,
   },
+  // Deploy Model Endpoint
   dme: {
     name: 'Name',
     type: 'Type',

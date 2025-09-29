@@ -22,6 +22,35 @@ export function CreateModelSection({
   handleDeleteEnv,
   handleAddEnv,
 }: Props) {
+  const handleExecutionRoleChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        ExecutionRoleArn: value,
+      },
+    });
+
+  const handleModelDataUrlGetChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        PrimaryContainer: {
+          ...data.Arguments?.PrimaryContainer,
+          ModelDataUrl: { Get: value },
+        },
+      },
+    });
+
+  const handlePrimaryContainerImageChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        PrimaryContainer: {
+          ...data.Arguments?.PrimaryContainer,
+          Image: value,
+        },
+      },
+    });
   return (
     <>
       <div className="right-pane-header">Execution Role</div>
@@ -29,14 +58,7 @@ export function CreateModelSection({
         <input
           {...register('cm.ExecutionRoleArn', { required: 'Required' })}
           value={data.Arguments?.ExecutionRoleArn ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                ExecutionRoleArn: e.target.value,
-              },
-            })
-          }
+          onChange={(e) => handleExecutionRoleChange(e.target.value)}
         />
         {showError('cm.ExecutionRoleArn') && (
           <small style={{ color: 'crimson' }}>{showError('cm.ExecutionRoleArn')}</small>
@@ -51,17 +73,7 @@ export function CreateModelSection({
             maxLength: { value: 1024, message: 'Must be at most 1024 characters' },
           })}
           value={data.Arguments?.PrimaryContainer?.ModelDataUrl?.Get ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                PrimaryContainer: {
-                  ...data.Arguments?.PrimaryContainer,
-                  ModelDataUrl: { Get: e.target.value },
-                },
-              },
-            })
-          }
+          onChange={(e) => handleModelDataUrlGetChange(e.target.value)}
         />
         {showError('cm.ModelDataUrlGet') && (
           <small style={{ color: 'crimson' }}>{showError('cm.ModelDataUrlGet')}</small>
@@ -71,17 +83,7 @@ export function CreateModelSection({
       <LabeledField label="Location(ECR URI)">
         <input
           value={data.Arguments?.PrimaryContainer?.Image ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                PrimaryContainer: {
-                  ...data.Arguments?.PrimaryContainer,
-                  Image: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handlePrimaryContainerImageChange(e.target.value)}
         />
       </LabeledField>
       <LabeledField label="Environment">

@@ -38,13 +38,13 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
   };
 
   const toProcessingStep = (node: Node<AppNodeData>) => {
-    const d = node.data as AppNodeData & { Arguments?: any; Type?: string };
+    const nodeData = node.data as AppNodeData & { Arguments?: any; Type?: string };
     const step: any = {
       Name: idToStepName.get(node.id),
-      Type: d.Type ?? 'Processing',
+      Type: nodeData.Type ?? 'Processing',
       Arguments: {},
     };
-    const args = d.Arguments ?? {};
+    const args = nodeData.Arguments ?? {};
     if (args.RoleArn) step.Arguments.RoleArn = args.RoleArn;
     if (args.ProcessingResources?.ClusterConfig) {
       step.Arguments.ProcessingResources = {
@@ -69,25 +69,25 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
       };
     }
     if (Array.isArray(args.ProcessingInputs)) {
-      step.Arguments.ProcessingInputs = args.ProcessingInputs.map((inp: any) => ({
-        InputName: inp.InputName,
+      step.Arguments.ProcessingInputs = args.ProcessingInputs.map((inputItem: any) => ({
+        InputName: inputItem.InputName,
         S3Input: {
-          S3Uri: inp.S3Input?.S3Uri,
-          LocalPath: inp.S3Input?.LocalPath,
-          S3DataType: inp.S3Input?.S3DataType,
-          S3InputMode: inp.S3Input?.S3InputMode,
-          S3CompressionType: inp.S3Input?.S3CompressionType,
+          S3Uri: inputItem.S3Input?.S3Uri,
+          LocalPath: inputItem.S3Input?.LocalPath,
+          S3DataType: inputItem.S3Input?.S3DataType,
+          S3InputMode: inputItem.S3Input?.S3InputMode,
+          S3CompressionType: inputItem.S3Input?.S3CompressionType,
         },
       }));
     }
     if (args.ProcessingOutputConfig?.Outputs) {
       step.Arguments.ProcessingOutputConfig = {
-        Outputs: args.ProcessingOutputConfig.Outputs.map((out: any) => ({
-          OutputName: out.OutputName,
+        Outputs: args.ProcessingOutputConfig.Outputs.map((outputItem: any) => ({
+          OutputName: outputItem.OutputName,
           S3Output: {
-            S3Uri: out.S3Output?.S3Uri,
-            LocalPath: out.S3Output?.LocalPath,
-            S3UploadMode: out.S3Output?.S3UploadMode,
+            S3Uri: outputItem.S3Output?.S3Uri,
+            LocalPath: outputItem.S3Output?.LocalPath,
+            S3UploadMode: outputItem.S3Output?.S3UploadMode,
           },
         })),
       };
@@ -97,19 +97,19 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
         MaxRuntimeInSeconds: args.StoppingCondition.MaxRuntimeInSeconds,
       };
     }
-    const deps = dependsOnFor(node.id);
-    if (deps) step.DependsOn = deps;
+    const dependsOn = dependsOnFor(node.id);
+    if (dependsOn) step.DependsOn = dependsOn;
     return step;
   };
 
   const toTrainingStep = (node: Node<AppNodeData>) => {
-    const d = node.data as AppNodeData & { Arguments?: any; Type?: string };
+    const nodeData = node.data as AppNodeData & { Arguments?: any; Type?: string };
     const step: any = {
       Name: idToStepName.get(node.id),
-      Type: d.Type ?? 'Training',
+      Type: nodeData.Type ?? 'Training',
       Arguments: {},
     };
-    const args = d.Arguments ?? {};
+    const args = nodeData.Arguments ?? {};
     if (args.RoleArn) step.Arguments.RoleArn = args.RoleArn;
     if (args.AlgorithmSpecification) {
       step.Arguments.AlgorithmSpecification = {
@@ -125,17 +125,17 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
       };
     }
     if (Array.isArray(args.InputDataConfig)) {
-      step.Arguments.InputDataConfig = args.InputDataConfig.map((inp: any) => ({
-        ChannelName: inp.ChannelName,
+      step.Arguments.InputDataConfig = args.InputDataConfig.map((inputItem: any) => ({
+        ChannelName: inputItem.ChannelName,
         DataSource: {
           S3DataSource: {
-            S3DataType: inp.DataSource?.S3DataSource?.S3DataType,
-            S3Uri: inp.DataSource?.S3DataSource?.S3Uri,
-            S3DataDistributionType: inp.DataSource?.S3DataSource?.S3DataDistributionType,
+            S3DataType: inputItem.DataSource?.S3DataSource?.S3DataType,
+            S3Uri: inputItem.DataSource?.S3DataSource?.S3Uri,
+            S3DataDistributionType: inputItem.DataSource?.S3DataSource?.S3DataDistributionType,
           },
         },
-        ...(inp.ContentType ? { ContentType: inp.ContentType } : {}),
-        ...(inp.InputMode ? { InputMode: inp.InputMode } : {}),
+        ...(inputItem.ContentType ? { ContentType: inputItem.ContentType } : {}),
+        ...(inputItem.InputMode ? { InputMode: inputItem.InputMode } : {}),
       }));
     }
     if (args.OutputDataConfig) {
@@ -151,19 +151,19 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
     if (args.HyperParameters && Object.keys(args.HyperParameters).length > 0) {
       step.Arguments.HyperParameters = args.HyperParameters;
     }
-    const deps = dependsOnFor(node.id);
-    if (deps) step.DependsOn = deps;
+    const dependsOn = dependsOnFor(node.id);
+    if (dependsOn) step.DependsOn = dependsOn;
     return step;
   };
 
   const toModelStep = (node: Node<AppNodeData>) => {
-    const d = node.data as AppNodeData & { Arguments?: any; Type?: string };
+    const nodeData = node.data as AppNodeData & { Arguments?: any; Type?: string };
     const step: any = {
       Name: idToStepName.get(node.id),
-      Type: d.Type ?? 'Model',
+      Type: nodeData.Type ?? 'Model',
       Arguments: {},
     };
-    const args = d.Arguments ?? {};
+    const args = nodeData.Arguments ?? {};
     if (args.ExecutionRoleArn) step.Arguments.ExecutionRoleArn = args.ExecutionRoleArn;
     if (args.PrimaryContainer) {
       step.Arguments.PrimaryContainer = {
@@ -175,19 +175,19 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
           : {}),
       };
     }
-    const deps = dependsOnFor(node.id);
-    if (deps) step.DependsOn = deps;
+    const dependsOn = dependsOnFor(node.id);
+    if (dependsOn) step.DependsOn = dependsOn;
     return step;
   };
 
   const toDeployModelBatchInferenceStep = (node: Node<AppNodeData>) => {
-    const d = node.data as AppNodeData & { Arguments?: any; Type?: string };
+    const nodeData = node.data as AppNodeData & { Arguments?: any; Type?: string };
     const step: any = {
       Name: idToStepName.get(node.id),
-      Type: d.Type ?? 'Transform',
+      Type: nodeData.Type ?? 'Transform',
       Arguments: {},
     };
-    const args = d.Arguments ?? {};
+    const args = nodeData.Arguments ?? {};
     if (args.ModelName) step.Arguments.ModelName = args.ModelName;
     if (args.TransformInput) {
       step.Arguments.TransformInput = {
@@ -226,22 +226,22 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
         InstanceCount: args.TransformResources.InstanceCount,
       };
     }
-    const deps = dependsOnFor(node.id);
-    if (deps) step.DependsOn = deps;
+    const dependsOn = dependsOnFor(node.id);
+    if (dependsOn) step.DependsOn = dependsOn;
     return step;
   };
 
   const toDeployModelEndpointSteps = (node: Node<AppNodeData>) => {
-    const d = node.data as any;
+    const nodeData = node.data as any;
     const baseName = idToStepName.get(node.id) as string;
     const endpointConfigName = `${baseName}_EndpointConfig`;
-    const pv = d.Arguments?.EndpointConfig?.ProductionVariants ?? [];
+    const productionVariants = nodeData.Arguments?.EndpointConfig?.ProductionVariants ?? [];
 
     const endpointConfigStep: any = {
       Name: endpointConfigName,
       Type: 'EndpointConfig',
       Arguments: {
-        ProductionVariants: pv.map((v: any) => ({
+        ProductionVariants: productionVariants.map((v: any) => ({
           InitialInstanceCount: v.InitialInstanceCount,
           ...(v.ManagedInstanceScaling?.MaxInstanceCount != null
             ? {
@@ -263,17 +263,17 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
       Name: baseName,
       Type: 'Endpoint',
       Arguments: {
-        EndpointName: d.Arguments?.EndpointName,
+        EndpointName: nodeData.Arguments?.EndpointName,
         EndpointConfigName: { Get: `Steps.${endpointConfigName}.EndpointConfigName` },
       },
       VirtualStepName: baseName,
       VirtualStepType: 'DeployModel',
     };
 
-    const deps = dependsOnFor(node.id);
-    if (deps) {
-      endpointConfigStep.DependsOn = deps;
-      endpointStep.DependsOn = deps;
+    const dependsOn = dependsOnFor(node.id);
+    if (dependsOn) {
+      endpointConfigStep.DependsOn = dependsOn;
+      endpointStep.DependsOn = dependsOn;
     }
 
     return [endpointConfigStep, endpointStep];

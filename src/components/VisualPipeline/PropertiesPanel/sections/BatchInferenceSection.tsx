@@ -16,6 +16,122 @@ export function BatchInferenceSection({
   update,
   s3OrHttpsRegex,
 }: Props) {
+  const handleModelNameChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        ModelName: { Get: value },
+      },
+    });
+
+  const handleTransformInputS3UriChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        TransformInput: {
+          ...data.Arguments?.TransformInput,
+          DataSource: {
+            S3DataSource: {
+              ...data.Arguments?.TransformInput?.DataSource?.S3DataSource,
+              S3Uri: value,
+            },
+          },
+        },
+      },
+    });
+
+  const handleTransformInputS3DataTypeChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        TransformInput: {
+          ...data.Arguments?.TransformInput,
+          DataSource: {
+            S3DataSource: {
+              ...data.Arguments?.TransformInput?.DataSource?.S3DataSource,
+              S3DataType: value,
+            },
+          },
+        },
+      },
+    });
+
+  const handleTransformInputContentTypeChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        TransformInput: {
+          ...data.Arguments?.TransformInput,
+          ContentType: value,
+        },
+      },
+    });
+
+  const handleTransformInputCompressionTypeChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        TransformInput: {
+          ...data.Arguments?.TransformInput,
+          CompressionType: value,
+        },
+      },
+    });
+
+  const handleTransformInputSplitTypeChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        TransformInput: {
+          ...data.Arguments?.TransformInput,
+          SplitType: value,
+        },
+      },
+    });
+
+  const handleTransformOutputS3PathChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        TransformOutput: {
+          ...data.Arguments?.TransformOutput,
+          S3OutputPath: value,
+        },
+      },
+    });
+
+  const handleTransformResourcesInstanceTypeChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        TransformResources: {
+          ...data.Arguments?.TransformResources,
+          InstanceType: value,
+        },
+      },
+    });
+
+  const handleTransformResourcesInstanceCountChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        TransformResources: {
+          ...data.Arguments?.TransformResources,
+          InstanceCount: Number(value),
+        },
+      },
+    });
+
+  const handleDataCaptureDestinationChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        DataCaptureConfig: {
+          ...data.Arguments?.DataCaptureConfig,
+          DestinationS3Uri: value,
+        },
+      },
+    });
   return (
     <>
       <div className="right-pane-header">Model Name</div>
@@ -23,14 +139,7 @@ export function BatchInferenceSection({
         <input
           {...register('dmbi.modelName', { required: 'Required' })}
           value={data.Arguments?.ModelName?.Get ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                ModelName: { Get: e.target.value },
-              },
-            })
-          }
+          onChange={(e) => handleModelNameChange(e.target.value)}
         />
         {showError('dmbi.modelName') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.modelName')}</small>
@@ -45,22 +154,7 @@ export function BatchInferenceSection({
             maxLength: { value: 1024, message: 'Must be at most 1024 characters' },
           })}
           value={data.Arguments?.TransformInput?.DataSource?.S3DataSource?.S3Uri ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                TransformInput: {
-                  ...data.Arguments?.TransformInput,
-                  DataSource: {
-                    S3DataSource: {
-                      ...data.Arguments?.TransformInput?.DataSource?.S3DataSource,
-                      S3Uri: e.target.value,
-                    },
-                  },
-                },
-              },
-            })
-          }
+          onChange={(e) => handleTransformInputS3UriChange(e.target.value)}
         />
         {showError('dmbi.s3Uri') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.s3Uri')}</small>
@@ -70,22 +164,7 @@ export function BatchInferenceSection({
         <input
           {...register('dmbi.s3DataType', { required: 'Required' })}
           value={data.Arguments?.TransformInput?.DataSource?.S3DataSource?.S3DataType ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                TransformInput: {
-                  ...data.Arguments?.TransformInput,
-                  DataSource: {
-                    S3DataSource: {
-                      ...data.Arguments?.TransformInput?.DataSource?.S3DataSource,
-                      S3DataType: e.target.value,
-                    },
-                  },
-                },
-              },
-            })
-          }
+          onChange={(e) => handleTransformInputS3DataTypeChange(e.target.value)}
         />
         {showError('dmbi.s3DataType') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.s3DataType')}</small>
@@ -94,49 +173,19 @@ export function BatchInferenceSection({
       <LabeledField label="Content Type">
         <input
           value={data.Arguments?.TransformInput?.ContentType ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                TransformInput: {
-                  ...data.Arguments?.TransformInput,
-                  ContentType: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleTransformInputContentTypeChange(e.target.value)}
         />
       </LabeledField>
       <LabeledField label="Compression Type">
         <input
           value={data.Arguments?.TransformInput?.CompressionType ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                TransformInput: {
-                  ...data.Arguments?.TransformInput,
-                  CompressionType: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleTransformInputCompressionTypeChange(e.target.value)}
         />
       </LabeledField>
       <LabeledField label="Split Type">
         <input
           value={data.Arguments?.TransformInput?.SplitType ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                TransformInput: {
-                  ...data.Arguments?.TransformInput,
-                  SplitType: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleTransformInputSplitTypeChange(e.target.value)}
         />
       </LabeledField>
       <div className="right-pane-header">Transform Output</div>
@@ -148,17 +197,7 @@ export function BatchInferenceSection({
             maxLength: { value: 1024, message: 'Must be at most 1024 characters' },
           })}
           value={data.Arguments?.TransformOutput?.S3OutputPath ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                TransformOutput: {
-                  ...data.Arguments?.TransformOutput,
-                  S3OutputPath: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleTransformOutputS3PathChange(e.target.value)}
         />
         {showError('dmbi.s3OutputPath') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.s3OutputPath')}</small>
@@ -169,17 +208,7 @@ export function BatchInferenceSection({
         <input
           {...register('dmbi.instanceType', { required: 'Required' })}
           value={data.Arguments?.TransformResources?.InstanceType ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                TransformResources: {
-                  ...data.Arguments?.TransformResources,
-                  InstanceType: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleTransformResourcesInstanceTypeChange(e.target.value)}
         />
         {showError('dmbi.instanceType') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.instanceType')}</small>
@@ -194,17 +223,7 @@ export function BatchInferenceSection({
             valueAsNumber: true,
           })}
           value={data.Arguments?.TransformResources?.InstanceCount ?? 0}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                TransformResources: {
-                  ...data.Arguments?.TransformResources,
-                  InstanceCount: Number(e.target.value),
-                },
-              },
-            })
-          }
+          onChange={(e) => handleTransformResourcesInstanceCountChange(e.target.value)}
         />
         {showError('dmbi.instanceCount') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.instanceCount')}</small>
@@ -218,17 +237,7 @@ export function BatchInferenceSection({
             maxLength: { value: 1024, message: 'Must be at most 1024 characters' },
           })}
           value={data.Arguments?.DataCaptureConfig?.DestinationS3Uri ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                DataCaptureConfig: {
-                  ...data.Arguments?.DataCaptureConfig,
-                  DestinationS3Uri: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleDataCaptureDestinationChange(e.target.value)}
         />
         {showError('dmbi.dataCaptureDestination') && (
           <small style={{ color: 'crimson' }}>{showError('dmbi.dataCaptureDestination')}</small>

@@ -71,6 +71,132 @@ export function DataProcessSection(props: Props) {
     OutputDataModal,
   } = props;
 
+  const handleInstanceTypeChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        ProcessingResources: {
+          ...data.Arguments?.ProcessingResources,
+          ClusterConfig: {
+            ...data.Arguments?.ProcessingResources?.ClusterConfig,
+            InstanceType: value,
+          },
+        },
+      },
+    });
+
+  const handleInstanceCountChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        ProcessingResources: {
+          ...data.Arguments?.ProcessingResources,
+          ClusterConfig: {
+            ...data.Arguments?.ProcessingResources?.ClusterConfig,
+            InstanceCount: Number(value),
+          },
+        },
+      },
+    });
+
+  const handleVolumeSizeChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        ProcessingResources: {
+          ...data.Arguments?.ProcessingResources,
+          ClusterConfig: {
+            ...data.Arguments?.ProcessingResources?.ClusterConfig,
+            VolumeSizeInGB: Number(value),
+          },
+        },
+      },
+    });
+
+  const handleImageUriChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        AppSpecification: {
+          ...data.Arguments?.AppSpecification,
+          ImageUri: value,
+        },
+      },
+    });
+
+  const handleEntrypointChange = (idx: number, value: string) => {
+    const updatedEntrypoints = [
+      ...(data.Arguments?.AppSpecification?.ContainerEntrypoint ?? []),
+    ];
+    updatedEntrypoints[idx] = value;
+    update({
+      Arguments: {
+        ...data.Arguments,
+        AppSpecification: {
+          ...data.Arguments?.AppSpecification,
+          ContainerEntrypoint: updatedEntrypoints,
+        },
+      },
+    });
+  };
+
+  const handleEntrypointDelete = (idx: number) => {
+    const updatedEntrypoints = (
+      data.Arguments?.AppSpecification?.ContainerEntrypoint ?? []
+    ).filter((_, i) => i !== idx);
+    update({
+      Arguments: {
+        ...data.Arguments,
+        AppSpecification: {
+          ...data.Arguments?.AppSpecification,
+          ContainerEntrypoint: updatedEntrypoints,
+        },
+      },
+    });
+  };
+
+  const handleContainerArgChange = (idx: number, value: string) => {
+    const updatedArgs = [
+      ...(data.Arguments?.AppSpecification?.ContainerArguments ?? []),
+    ];
+    updatedArgs[idx] = value;
+    update({
+      Arguments: {
+        ...data.Arguments,
+        AppSpecification: {
+          ...data.Arguments?.AppSpecification,
+          ContainerArguments: updatedArgs,
+        },
+      },
+    });
+  };
+
+  const handleContainerArgDelete = (idx: number) => {
+    const updatedArgs = (
+      data.Arguments?.AppSpecification?.ContainerArguments ?? []
+    ).filter((_, i) => i !== idx);
+    update({
+      Arguments: {
+        ...data.Arguments,
+        AppSpecification: {
+          ...data.Arguments?.AppSpecification,
+          ContainerArguments: updatedArgs,
+        },
+      },
+    });
+  };
+
+  const handleStoppingMaxChange = (value: string) =>
+    update({
+      Arguments: {
+        ...data.Arguments,
+        StoppingCondition: {
+          ...data.Arguments?.StoppingCondition,
+          MaxRuntimeInSeconds: Number(value),
+        },
+      },
+    });
+
   return (
     <>
       <div className="right-pane-header">Instance</div>
@@ -78,20 +204,7 @@ export function DataProcessSection(props: Props) {
         <input
           {...register('dp.InstanceType', { required: 'Required' })}
           value={data.Arguments?.ProcessingResources?.ClusterConfig?.InstanceType ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                ProcessingResources: {
-                  ...data.Arguments?.ProcessingResources,
-                  ClusterConfig: {
-                    ...data.Arguments?.ProcessingResources?.ClusterConfig,
-                    InstanceType: e.target.value,
-                  },
-                },
-              },
-            })
-          }
+          onChange={(e) => handleInstanceTypeChange(e.target.value)}
         />
         {showError('dp.InstanceType') && (
           <small style={{ color: 'crimson' }}>{showError('dp.InstanceType')}</small>
@@ -106,20 +219,7 @@ export function DataProcessSection(props: Props) {
             valueAsNumber: true,
           })}
           value={data.Arguments?.ProcessingResources?.ClusterConfig?.InstanceCount ?? 0}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                ProcessingResources: {
-                  ...data.Arguments?.ProcessingResources,
-                  ClusterConfig: {
-                    ...data.Arguments?.ProcessingResources?.ClusterConfig,
-                    InstanceCount: Number(e.target.value),
-                  },
-                },
-              },
-            })
-          }
+          onChange={(e) => handleInstanceCountChange(e.target.value)}
         />
         {showError('dp.InstanceCount') && (
           <small style={{ color: 'crimson' }}>{showError('dp.InstanceCount')}</small>
@@ -134,20 +234,7 @@ export function DataProcessSection(props: Props) {
             valueAsNumber: true,
           })}
           value={data.Arguments?.ProcessingResources?.ClusterConfig?.VolumeSizeInGB ?? 0}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                ProcessingResources: {
-                  ...data.Arguments?.ProcessingResources,
-                  ClusterConfig: {
-                    ...data.Arguments?.ProcessingResources?.ClusterConfig,
-                    VolumeSizeInGB: Number(e.target.value),
-                  },
-                },
-              },
-            })
-          }
+          onChange={(e) => handleVolumeSizeChange(e.target.value)}
         />
         {showError('dp.VolumeSizeInGB') && (
           <small style={{ color: 'crimson' }}>{showError('dp.VolumeSizeInGB')}</small>
@@ -255,17 +342,7 @@ export function DataProcessSection(props: Props) {
         <input
           {...register('dp.ImageUri', { required: 'Required' })}
           value={data.Arguments?.AppSpecification?.ImageUri ?? ''}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                AppSpecification: {
-                  ...data.Arguments?.AppSpecification,
-                  ImageUri: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={(e) => handleImageUriChange(e.target.value)}
         />
         {showError('dp.ImageUri') && (
           <small style={{ color: 'crimson' }}>{showError('dp.ImageUri')}</small>
@@ -279,39 +356,11 @@ export function DataProcessSection(props: Props) {
                 className="entrypoint-input"
                 type="text"
                 value={entry}
-                onChange={(e) => {
-                  const newEntrypoint = e.target.value;
-                  const updatedEntrypoints = [
-                    ...(data.Arguments?.AppSpecification?.ContainerEntrypoint ?? []),
-                  ];
-                  updatedEntrypoints[idx] = newEntrypoint;
-                  update({
-                    Arguments: {
-                      ...data.Arguments,
-                      AppSpecification: {
-                        ...data.Arguments?.AppSpecification,
-                        ContainerEntrypoint: updatedEntrypoints,
-                      },
-                    },
-                  });
-                }}
+                onChange={(e) => handleEntrypointChange(idx, e.target.value)}
               />
               <button
                 className="delete-entrypoint"
-                onClick={() => {
-                  const updatedEntrypoints = (
-                    data.Arguments?.AppSpecification?.ContainerEntrypoint ?? []
-                  ).filter((_, i) => i !== idx);
-                  update({
-                    Arguments: {
-                      ...data.Arguments,
-                      AppSpecification: {
-                        ...data.Arguments?.AppSpecification,
-                        ContainerEntrypoint: updatedEntrypoints,
-                      },
-                    },
-                  });
-                }}
+                onClick={() => handleEntrypointDelete(idx)}
               >
                 ❌
               </button>
@@ -330,39 +379,11 @@ export function DataProcessSection(props: Props) {
                 className="entrypoint-input"
                 type="text"
                 value={arg}
-                onChange={(e) => {
-                  const newArg = e.target.value;
-                  const updatedArgs = [
-                    ...(data.Arguments?.AppSpecification?.ContainerArguments ?? []),
-                  ];
-                  updatedArgs[idx] = newArg;
-                  update({
-                    Arguments: {
-                      ...data.Arguments,
-                      AppSpecification: {
-                        ...data.Arguments?.AppSpecification,
-                        ContainerArguments: updatedArgs,
-                      },
-                    },
-                  });
-                }}
+                onChange={(e) => handleContainerArgChange(idx, e.target.value)}
               />
               <button
                 className="delete-entrypoint"
-                onClick={() => {
-                  const updatedArgs = (
-                    data.Arguments?.AppSpecification?.ContainerArguments ?? []
-                  ).filter((_, i) => i !== idx);
-                  update({
-                    Arguments: {
-                      ...data.Arguments,
-                      AppSpecification: {
-                        ...data.Arguments?.AppSpecification,
-                        ContainerArguments: updatedArgs,
-                      },
-                    },
-                  });
-                }}
+                onClick={() => handleContainerArgDelete(idx)}
               >
                 ❌
               </button>
@@ -382,17 +403,7 @@ export function DataProcessSection(props: Props) {
             valueAsNumber: true,
           })}
           value={data.Arguments?.StoppingCondition?.MaxRuntimeInSeconds ?? 0}
-          onChange={(e) =>
-            update({
-              Arguments: {
-                ...data.Arguments,
-                StoppingCondition: {
-                  ...data.Arguments?.StoppingCondition,
-                  MaxRuntimeInSeconds: Number(e.target.value),
-                },
-              },
-            })
-          }
+          onChange={(e) => handleStoppingMaxChange(e.target.value)}
         />
         {showError('dp.MaxRuntimeInSeconds') && (
           <small style={{ color: 'crimson' }}>{showError('dp.MaxRuntimeInSeconds')}</small>
