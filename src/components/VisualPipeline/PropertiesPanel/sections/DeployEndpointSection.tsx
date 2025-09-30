@@ -1,43 +1,43 @@
 import { LabeledField } from '../../LabeledField/LabeledField';
-import type { AppNodeData } from '../../types';
+import type { AppNodeData, FormRegister, ShowErrorFunction, NodeUpdateFunction, DeployModelEndpointData } from '../../types';
 
 type Props = {
   data: AppNodeData & { kind: 'deployModelEndpoint' };
-  register: any;
-  showError: (name: string) => string | undefined;
-  update: (partial: Partial<AppNodeData>) => void;
+  register: FormRegister;
+  showError: ShowErrorFunction;
+  update: NodeUpdateFunction;
 };
 
 export function DeployEndpointSection({ data, register, showError, update }: Props) {
-  const ensurePv = (overrides: Partial<any>) => {
-    const current = (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0] ?? {};
+  const ensurePv = (overrides: Partial<NonNullable<DeployModelEndpointData['Arguments']['EndpointConfig']>['ProductionVariants'][0]>) => {
+    const current = data.Arguments?.EndpointConfig?.ProductionVariants?.[0];
     const pv = [
       {
-        InitialInstanceCount: current.InitialInstanceCount ?? 1,
-        ManagedInstanceScaling: current.ManagedInstanceScaling ?? {},
-        InstanceType: current.InstanceType ?? '',
-        ModelName: current.ModelName ?? { Get: '' },
-        VariantName: current.VariantName ?? 'AllTraffic',
+        InitialInstanceCount: current?.InitialInstanceCount ?? 1,
+        ManagedInstanceScaling: current?.ManagedInstanceScaling ?? {},
+        InstanceType: current?.InstanceType ?? '',
+        ModelName: current?.ModelName ?? { Get: '' },
+        VariantName: current?.VariantName ?? 'AllTraffic',
         ...overrides,
       },
     ];
     update({
       Arguments: {
-        ...(data as any).Arguments,
+        ...data.Arguments,
         EndpointConfig: {
           ProductionVariants: pv,
         },
       },
-    } as any);
+    });
   };
 
   const handleEndpointNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({
       Arguments: {
-        ...(data as any).Arguments,
+        ...data.Arguments,
         EndpointName: e.target.value,
       },
-    } as any);
+    });
 
   const handlePvInstanceTypeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     ensurePv({ InstanceType: e.target.value });
@@ -48,7 +48,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
   const handlePvMaxInstanceCountChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     ensurePv({
       ManagedInstanceScaling: {
-        ...((data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.ManagedInstanceScaling ?? {}),
+        ...(data.Arguments?.EndpointConfig?.ProductionVariants?.[0]?.ManagedInstanceScaling ?? {}),
         MaxInstanceCount: Number(e.target.value),
       },
     });
@@ -64,7 +64,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
       <LabeledField label="Endpoint Name*">
         <input
           {...register('dme.endpointName', { required: 'Required' })}
-          value={(data as any).Arguments?.EndpointName ?? ''}
+          value={data.Arguments?.EndpointName ?? ''}
           onChange={handleEndpointNameChange}
         />
         {showError('dme.endpointName') && (
@@ -76,7 +76,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
         <input
           {...register('dme.pvInstanceType0', { required: 'Required' })}
           value={
-            (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.InstanceType ?? ''
+            data.Arguments?.EndpointConfig?.ProductionVariants?.[0]?.InstanceType ?? ''
           }
           onChange={handlePvInstanceTypeChange}
         />
@@ -89,7 +89,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
           type="number"
           {...register('dme.pvInitial0', { required: 'Required', valueAsNumber: true })}
           value={
-            (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]
+            data.Arguments?.EndpointConfig?.ProductionVariants?.[0]
               ?.InitialInstanceCount ?? 1
           }
           onChange={handlePvInitialInstanceCountChange}
@@ -103,7 +103,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
           type="number"
           {...register('dme.pvMax0', { valueAsNumber: true })}
           value={
-            (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.ManagedInstanceScaling
+            data.Arguments?.EndpointConfig?.ProductionVariants?.[0]?.ManagedInstanceScaling
               ?.MaxInstanceCount ?? ''
           }
           onChange={handlePvMaxInstanceCountChange}
@@ -116,7 +116,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
         <input
           {...register('dme.pvModelNameGet0', { required: 'Required' })}
           value={
-            (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.ModelName?.Get ?? ''
+            data.Arguments?.EndpointConfig?.ProductionVariants?.[0]?.ModelName?.Get ?? ''
           }
           onChange={handlePvModelNameGetChange}
         />
@@ -128,7 +128,7 @@ export function DeployEndpointSection({ data, register, showError, update }: Pro
         <input
           {...register('dme.pvVariantName0', { required: 'Required' })}
           value={
-            (data as any).Arguments?.EndpointConfig?.ProductionVariants?.[0]?.VariantName ??
+            data.Arguments?.EndpointConfig?.ProductionVariants?.[0]?.VariantName ??
             'AllTraffic'
           }
           onChange={handlePvVariantNameChange}

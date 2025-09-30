@@ -164,7 +164,7 @@ export const PropertiesPanel = memo(function PropertiesPanel({
           [newKey]: oldVal,
         },
       },
-    } as any);
+    });
   };
 
   const handleHyperParamValueChangeFactory = (key: string) => (
@@ -226,8 +226,8 @@ export const PropertiesPanel = memo(function PropertiesPanel({
       },
     };
     const next = Array.isArray(processingInputs) ? [...processingInputs] : [];
-    if (editIndex != null) next[editIndex] = newItem as any;
-    else next.push(newItem as any);
+    if (editIndex != null) next[editIndex] = newItem;
+    else next.push(newItem);
     update({
       Arguments: {
         ...data.Arguments,
@@ -271,8 +271,8 @@ export const PropertiesPanel = memo(function PropertiesPanel({
       },
     };
     const next = Array.isArray(processingOutputs) ? [...processingOutputs] : [];
-    if (editIndex != null) next[editIndex] = newItem as any;
-    else next.push(newItem as any);
+    if (editIndex != null) next[editIndex] = newItem;
+    else next.push(newItem);
     update({
       Arguments: {
         ...data.Arguments,
@@ -326,8 +326,8 @@ export const PropertiesPanel = memo(function PropertiesPanel({
       },
     };
     const next = Array.isArray(trainingInputs) ? [...trainingInputs] : [];
-    if (editIndex != null) next[editIndex] = newItem as any;
-    else next.push(newItem as any);
+    if (editIndex != null) next[editIndex] = newItem;
+    else next.push(newItem);
     update({
       Arguments: {
         ...data.Arguments,
@@ -383,10 +383,10 @@ export const PropertiesPanel = memo(function PropertiesPanel({
           <>
             {data.kind === 'dataProcess' && (
               <DataProcessSection
-                data={data as any}
+                data={data}
                 register={register}
                 showError={showError}
-                update={update as any}
+                update={update}
                 processingInputs={processingInputs}
                 processingOutputs={processingOutputs}
                 addDatasetModalOpen={addDatasetModalOpen}
@@ -415,10 +415,10 @@ export const PropertiesPanel = memo(function PropertiesPanel({
             {data.kind === 'trainModel' && (
               <>
                 <TrainModelSection
-                  data={data as any}
+                  data={data}
                   register={register}
                   showError={showError}
-                  update={update as any}
+                  update={update}
                   trainingInputs={trainingInputs}
                   addTrainDatasetsInputModal={addTrainDatasetsInputModal}
                   openTrainDatasetsInputModal={openTrainDatasetsInputModal}
@@ -460,10 +460,10 @@ export const PropertiesPanel = memo(function PropertiesPanel({
 
             {data.kind === 'createModel' && (
               <CreateModelSection
-                data={data as any}
+                data={data}
                 register={register}
                 showError={showError}
-                update={update as any}
+                update={update}
                 environment={environment}
                 handleEnvChange={handleEnvChange}
                 handleDeleteEnv={handleDeleteEnv}
@@ -472,18 +472,18 @@ export const PropertiesPanel = memo(function PropertiesPanel({
             )}
             {data.kind === 'deployModelEndpoint' && (
               <DeployEndpointSection
-                data={data as any}
+                data={data}
                 register={register}
                 showError={showError}
-                update={update as any}
+                update={update}
               />
             )}
             {data.kind === 'deployModelBatchInference' && (
               <BatchInferenceSection
-                data={data as any}
+                data={data}
                 register={register}
                 showError={showError}
-                update={update as any}
+                update={update}
                 s3OrHttpsRegex={s3OrHttpsRegex}
               />
             )}

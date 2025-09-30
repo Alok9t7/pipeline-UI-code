@@ -1,21 +1,19 @@
 import { LabeledField } from '../../LabeledField/LabeledField';
-import type { AppNodeData } from '../../types';
+import type { AppNodeData, FormRegister, ShowErrorFunction, NodeUpdateFunction } from '../../types';
 import { nameRegex } from '../../validation';
 
 type Props = {
   data: AppNodeData;
-  register: any;
-  showError: (name: string) => string | undefined;
-  update: <K extends AppNodeData['kind']>(
-    partial: Partial<Extract<AppNodeData, { kind: K }>>
-  ) => void;
+  register: FormRegister;
+  showError: ShowErrorFunction;
+  update: NodeUpdateFunction;
 };
 
 export function DetailsSection({ data, register, showError, update }: Props) {
   const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     update({ name: e.target.value });
   const handlePipelineNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    update({ Name: e.target.value } as any);
+    update({ Name: e.target.value });
   return (
     <>
       <LabeledField label="Step type">
@@ -30,7 +28,7 @@ export function DetailsSection({ data, register, showError, update }: Props) {
             required: 'Required',
             pattern: { value: nameRegex, message: 'Must match ^[A-Za-z0-9\\-_]{1,64}$' },
           })}
-          value={(data as any).Name ?? ''}
+          value={data.Name ?? ''}
           onChange={handlePipelineNameChange}
         />
         {showError('common.Name') && (

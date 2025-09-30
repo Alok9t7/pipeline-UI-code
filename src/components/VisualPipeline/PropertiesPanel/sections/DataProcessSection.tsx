@@ -1,13 +1,13 @@
 import { LabeledField } from '../../LabeledField/LabeledField';
-import type { AppNodeData } from '../../types';
+import type { AppNodeData, FormRegister, ShowErrorFunction, NodeUpdateFunction, ProcessingInput, ProcessingOutput, AddDataSetsModalComponent, OutputDataModalComponent } from '../../types';
 
 type Props = {
   data: AppNodeData & { kind: 'dataProcess' };
-  register: any;
-  showError: (name: string) => string | undefined;
-  update: (partial: Partial<AppNodeData>) => void;
-  processingInputs: any[];
-  processingOutputs: any[];
+  register: FormRegister;
+  showError: ShowErrorFunction;
+  update: NodeUpdateFunction;
+  processingInputs: ProcessingInput[];
+  processingOutputs: ProcessingOutput[];
   addDatasetModalOpen: boolean;
   openDatasetsModal: () => void;
   closeDatasetsModal: () => void;
@@ -37,8 +37,8 @@ type Props = {
   handleEditProcessingOutput: (index: number) => void;
   addEntrypoints: () => void;
   addContainerArguments: () => void;
-  AddDataSetsModal: any;
-  OutputDataModal: any;
+  AddDataSetsModal: AddDataSetsModalComponent;
+  OutputDataModal: OutputDataModalComponent;
 };
 
 export function DataProcessSection(props: Props) {

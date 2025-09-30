@@ -1,4 +1,5 @@
 import type { Node } from '@xyflow/react';
+import type { UseFormRegister, FieldValues } from 'react-hook-form';
 
 export type NodeKind =
   | 'dataProcess'
@@ -183,9 +184,86 @@ export type AppNodeData =
 
 export type AppNode = Node<AppNodeData, 'appNode'>;
 
-type PipelineDefinition = {
-  Steps?: any[];
-  [key: string]: any;
+// React Hook Form types
+export type FormRegister = UseFormRegister<FieldValues>;
+export type ShowErrorFunction = (name: string) => string | undefined;
+
+// Update function type for node data
+export type NodeUpdateFunction = <K extends AppNodeData['kind']>(
+  partial: Partial<Extract<AppNodeData, { kind: K }>>
+) => void;
+
+// Modal component types
+export type AddDataSetsModalComponent = React.ComponentType<{
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (payload: { inputName: string; s3Uri: string; localPath: string }, editIndex: number | null) => void;
+  editIndex?: number | null;
+  initialValues?: { inputName: string; s3Uri: string; localPath: string };
+}>;
+
+export type OutputDataModalComponent = React.ComponentType<{
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (payload: { outputName: string; localPath: string; s3Uri: string; s3UploadMode: 'Continuous' | 'EndOfJob' }, editIndex: number | null) => void;
+  editIndex?: number | null;
+  initialValues?: { outputName: string; localPath: string; s3Uri: string; s3UploadMode: 'Continuous' | 'EndOfJob' };
+}>;
+
+export type TrainDatasetsInputModalComponent = React.ComponentType<{
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (payload: { channelName: string; s3DataType: string; s3Uri: string; s3DataDistributionType?: string }, editIndex: number | null) => void;
+  editIndex?: number | null;
+  initialValues?: { channelName: string; s3DataType: string; s3Uri: string; s3DataDistributionType?: string };
+}>;
+
+// Step and Pipeline types
+export type ProcessingInput = {
+  InputName: string;
+  S3Input: {
+    S3Uri: string;
+    LocalPath: string;
+    S3DataType: string;
+    S3InputMode: string;
+    S3CompressionType: string;
+  };
+};
+
+export type ProcessingOutput = {
+  OutputName: string;
+  S3Output: {
+    S3Uri: string;
+    LocalPath: string;
+    S3UploadMode: string;
+  };
+};
+
+export type TrainingInput = {
+  ChannelName: string;
+  DataSource: {
+    S3DataSource: {
+      S3DataType: string;
+      S3Uri: string;
+      S3DataDistributionType: string;
+    };
+  };
+  ContentType?: string;
+  InputMode?: string;
+};
+
+export type SageMakerStep = {
+  Name: string;
+  Type: string;
+  Arguments: Record<string, any>;
+  DependsOn?: string[];
+  VirtualStepName?: string;
+  VirtualStepType?: string;
+};
+
+export type PipelineDefinition = {
+  Steps?: SageMakerStep[];
+  [key: string]: unknown;
 };
 
 export type PipelineStep = {

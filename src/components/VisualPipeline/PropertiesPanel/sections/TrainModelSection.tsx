@@ -1,12 +1,12 @@
 import { LabeledField } from '../../LabeledField/LabeledField';
-import type { AppNodeData } from '../../types';
+import type { AppNodeData, FormRegister, ShowErrorFunction, NodeUpdateFunction, TrainingInput, TrainDatasetsInputModalComponent } from '../../types';
 
 type Props = {
   data: AppNodeData & { kind: 'trainModel' };
-  register: any;
-  showError: (name: string) => string | undefined;
-  update: (partial: Partial<AppNodeData>) => void;
-  trainingInputs: any[];
+  register: FormRegister;
+  showError: ShowErrorFunction;
+  update: NodeUpdateFunction;
+  trainingInputs: TrainingInput[];
   addTrainDatasetsInputModal: boolean;
   openTrainDatasetsInputModal: () => void;
   closeTrainDatasetsInputModal: () => void;
@@ -22,7 +22,7 @@ type Props = {
     editIndex: number | null
   ) => void;
   handleDeleteTrainingInput: (index: number) => void;
-  TrainDatasetsInputModal: any;
+  TrainDatasetsInputModal: TrainDatasetsInputModalComponent;
   s3OrHttpsRegex: RegExp;
 };
 

@@ -77,8 +77,8 @@ export const FlowCanvas = memo(function FlowCanvas({
         if (!apiBase) return;
         const apiUrl = apiBase + '/list-pipeline';
         const data = await listPipelines(apiUrl, token);
-        setPipelines(data.pipelines || []);
-        if (data.pipelines?.length > 0) setSelectedPipeline(data.pipelines[0]);
+        setPipelines((data.pipelines || []) as PipelineStep[]);
+        if (data.pipelines?.length > 0) setSelectedPipeline(data.pipelines[0] as PipelineStep);
       } catch (err) {
         console.error('Failed to fetch pipelines:', err);
       }

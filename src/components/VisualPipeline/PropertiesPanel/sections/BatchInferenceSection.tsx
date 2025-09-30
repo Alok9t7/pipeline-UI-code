@@ -1,11 +1,11 @@
 import { LabeledField } from '../../LabeledField/LabeledField';
-import type { AppNodeData } from '../../types';
+import type { AppNodeData, FormRegister, ShowErrorFunction, NodeUpdateFunction } from '../../types';
 
 type Props = {
   data: AppNodeData & { kind: 'deployModelBatchInference' };
-  register: any;
-  showError: (name: string) => string | undefined;
-  update: (partial: Partial<AppNodeData>) => void;
+  register: FormRegister;
+  showError: ShowErrorFunction;
+  update: NodeUpdateFunction;
   s3OrHttpsRegex: RegExp;
 };
 

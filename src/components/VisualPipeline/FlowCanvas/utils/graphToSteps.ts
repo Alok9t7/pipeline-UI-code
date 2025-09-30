@@ -1,6 +1,17 @@
 import type { Edge, Node } from '@xyflow/react';
 
-import type { AppNodeData } from '../../types';
+import type {
+  AppNodeData,
+  SageMakerStep,
+  ProcessingInput,
+  ProcessingOutput,
+  TrainingInput,
+  DataProcessData,
+  TrainModelData,
+  CreateModelData,
+  DeployModelBatchInferenceData,
+  DeployModelEndpointData,
+} from '../../types';
 
 function collectConnectedNodeIds(edges: Edge[]): Set<string> {
   const connectedIds = new Set<string>();
@@ -16,13 +27,13 @@ function buildIdToStepName(nodes: Node<AppNodeData>[]): Map<string, string> {
   for (const node of nodes) {
     const data = node.data as AppNodeData;
     const fallback = data.kind ? `${data.kind}-${node.id}` : `step-${node.id}`;
-    const stepName = (data as any).Name || (data as any).name || fallback;
+    const stepName = data.Name || data.name || fallback;
     idToStepName.set(node.id, stepName);
   }
   return idToStepName;
 }
 
-export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]): any[] {
+export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]): SageMakerStep[] {
   const connectedIds = collectConnectedNodeIds(edges);
   const connectedNodes = allNodes.filter((n) => connectedIds.has(n.id));
 
@@ -38,13 +49,13 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
   };
 
   const toProcessingStep = (node: Node<AppNodeData>) => {
-    const nodeData = node.data as AppNodeData & { Arguments?: any; Type?: string };
-    const step: any = {
-      Name: idToStepName.get(node.id),
+    const nodeData = node.data as DataProcessData;
+    const step: SageMakerStep = {
+      Name: idToStepName.get(node.id) ?? '',
       Type: nodeData.Type ?? 'Processing',
       Arguments: {},
     };
-    const args = nodeData.Arguments ?? {};
+    const args = nodeData.Arguments;
     if (args.RoleArn) step.Arguments.RoleArn = args.RoleArn;
     if (args.ProcessingResources?.ClusterConfig) {
       step.Arguments.ProcessingResources = {
@@ -69,7 +80,7 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
       };
     }
     if (Array.isArray(args.ProcessingInputs)) {
-      step.Arguments.ProcessingInputs = args.ProcessingInputs.map((inputItem: any) => ({
+      step.Arguments.ProcessingInputs = args.ProcessingInputs.map((inputItem: ProcessingInput) => ({
         InputName: inputItem.InputName,
         S3Input: {
           S3Uri: inputItem.S3Input?.S3Uri,
@@ -82,7 +93,7 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
     }
     if (args.ProcessingOutputConfig?.Outputs) {
       step.Arguments.ProcessingOutputConfig = {
-        Outputs: args.ProcessingOutputConfig.Outputs.map((outputItem: any) => ({
+        Outputs: args.ProcessingOutputConfig.Outputs.map((outputItem: ProcessingOutput) => ({
           OutputName: outputItem.OutputName,
           S3Output: {
             S3Uri: outputItem.S3Output?.S3Uri,
@@ -103,13 +114,13 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
   };
 
   const toTrainingStep = (node: Node<AppNodeData>) => {
-    const nodeData = node.data as AppNodeData & { Arguments?: any; Type?: string };
-    const step: any = {
-      Name: idToStepName.get(node.id),
+    const nodeData = node.data as TrainModelData;
+    const step: SageMakerStep = {
+      Name: idToStepName.get(node.id) ?? '',
       Type: nodeData.Type ?? 'Training',
       Arguments: {},
     };
-    const args = nodeData.Arguments ?? {};
+    const args = nodeData.Arguments;
     if (args.RoleArn) step.Arguments.RoleArn = args.RoleArn;
     if (args.AlgorithmSpecification) {
       step.Arguments.AlgorithmSpecification = {
@@ -125,7 +136,7 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
       };
     }
     if (Array.isArray(args.InputDataConfig)) {
-      step.Arguments.InputDataConfig = args.InputDataConfig.map((inputItem: any) => ({
+      step.Arguments.InputDataConfig = args.InputDataConfig.map((inputItem: TrainingInput) => ({
         ChannelName: inputItem.ChannelName,
         DataSource: {
           S3DataSource: {
@@ -157,13 +168,13 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
   };
 
   const toModelStep = (node: Node<AppNodeData>) => {
-    const nodeData = node.data as AppNodeData & { Arguments?: any; Type?: string };
-    const step: any = {
-      Name: idToStepName.get(node.id),
+    const nodeData = node.data as CreateModelData;
+    const step: SageMakerStep = {
+      Name: idToStepName.get(node.id) ?? '',
       Type: nodeData.Type ?? 'Model',
       Arguments: {},
     };
-    const args = nodeData.Arguments ?? {};
+    const args = nodeData.Arguments;
     if (args.ExecutionRoleArn) step.Arguments.ExecutionRoleArn = args.ExecutionRoleArn;
     if (args.PrimaryContainer) {
       step.Arguments.PrimaryContainer = {
@@ -181,13 +192,13 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
   };
 
   const toDeployModelBatchInferenceStep = (node: Node<AppNodeData>) => {
-    const nodeData = node.data as AppNodeData & { Arguments?: any; Type?: string };
-    const step: any = {
-      Name: idToStepName.get(node.id),
+    const nodeData = node.data as DeployModelBatchInferenceData;
+    const step: SageMakerStep = {
+      Name: idToStepName.get(node.id) ?? '',
       Type: nodeData.Type ?? 'Transform',
       Arguments: {},
     };
-    const args = nodeData.Arguments ?? {};
+    const args = nodeData.Arguments;
     if (args.ModelName) step.Arguments.ModelName = args.ModelName;
     if (args.TransformInput) {
       step.Arguments.TransformInput = {
@@ -232,16 +243,18 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
   };
 
   const toDeployModelEndpointSteps = (node: Node<AppNodeData>) => {
-    const nodeData = node.data as any;
-    const baseName = idToStepName.get(node.id) as string;
+    const nodeData = node.data as DeployModelEndpointData;
+    const baseName = idToStepName.get(node.id) ?? '';
     const endpointConfigName = `${baseName}_EndpointConfig`;
-    const productionVariants = nodeData.Arguments?.EndpointConfig?.ProductionVariants ?? [];
+    const productionVariants = (nodeData.Arguments?.EndpointConfig?.ProductionVariants ?? []) as NonNullable<
+      DeployModelEndpointData['Arguments']['EndpointConfig']
+    >['ProductionVariants'];
 
-    const endpointConfigStep: any = {
+    const endpointConfigStep: SageMakerStep = {
       Name: endpointConfigName,
       Type: 'EndpointConfig',
       Arguments: {
-        ProductionVariants: productionVariants.map((variant: any) => ({
+        ProductionVariants: productionVariants.map((variant) => ({
           InitialInstanceCount: variant.InitialInstanceCount,
           ...(variant.ManagedInstanceScaling?.MaxInstanceCount != null
             ? {
@@ -259,7 +272,7 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
       VirtualStepType: 'DeployModel',
     };
 
-    const endpointStep: any = {
+    const endpointStep: SageMakerStep = {
       Name: baseName,
       Type: 'Endpoint',
       Arguments: {
@@ -279,7 +292,7 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
     return [endpointConfigStep, endpointStep];
   };
 
-  const steps: any[] = [];
+  const steps: SageMakerStep[] = [];
   for (const node of connectedNodes) {
     switch ((node.data as AppNodeData).kind) {
       case 'dataProcess':
@@ -298,7 +311,7 @@ export function buildStepsFromGraph(allNodes: Node<AppNodeData>[], edges: Edge[]
         steps.push(...toDeployModelEndpointSteps(node));
         break;
       default:
-        steps.push({});
+        // skip unknown kinds
     }
   }
 

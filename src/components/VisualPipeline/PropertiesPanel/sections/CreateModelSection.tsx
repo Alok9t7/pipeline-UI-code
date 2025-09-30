@@ -1,11 +1,11 @@
 import { LabeledField } from '../../LabeledField/LabeledField';
-import type { AppNodeData } from '../../types';
+import type { AppNodeData, FormRegister, ShowErrorFunction, NodeUpdateFunction } from '../../types';
 
 type Props = {
   data: AppNodeData & { kind: 'createModel' };
-  register: any;
-  showError: (name: string) => string | undefined;
-  update: (partial: Partial<AppNodeData>) => void;
+  register: FormRegister;
+  showError: ShowErrorFunction;
+  update: NodeUpdateFunction;
   environment: Record<string, string>;
   handleEnvChange: (key: string, value: string) => void;
   handleDeleteEnv: (key: string) => void;
@@ -57,7 +57,7 @@ export function CreateModelSection({
 
   const handleModelDataUrlModeChange = (mode: 'step' | 'string') => {
     const current = data.Arguments?.PrimaryContainer?.ModelDataUrl;
-    let nextValue: any;
+    let nextValue: string | { Get: string };
     if (mode === 'step') {
       const existing = typeof current === 'object' && current?.Get ? current.Get : '';
       nextValue = { Get: existing };

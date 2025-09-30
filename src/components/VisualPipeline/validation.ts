@@ -277,7 +277,7 @@ export function validateDeployModelBatchInference(
     }
 
     // DataCaptureConfig
-    const dcc = data.Arguments.DataCaptureConfig as any;
+    const dcc = data.Arguments.DataCaptureConfig;
     if (dcc) {
       if (!dcc.DestinationS3Uri)
         push(errors, PATH.dmbi.dataCaptureDestination, MSG.required('DestinationS3Uri'));
