@@ -1,10 +1,12 @@
-export function topoSortSteps(steps: any[]): any[] {
-  const nameToStep = new Map<string, any>();
-  steps.forEach((s: any) => nameToStep.set(s.Name, s));
-  const visited = new Set<string>();
-  const result: any[] = [];
+import type { SageMakerStep } from '../../types';
 
-  function visit(s: any) {
+export function topoSortSteps(steps: SageMakerStep[]): SageMakerStep[] {
+  const nameToStep = new Map<string, SageMakerStep>();
+  steps.forEach((s: SageMakerStep) => nameToStep.set(s.Name, s));
+  const visited = new Set<string>();
+  const result: SageMakerStep[] = [];
+
+  function visit(s: SageMakerStep) {
     if (visited.has(s.Name)) return;
     visited.add(s.Name);
     const deps: string[] = Array.isArray(s.DependsOn) ? s.DependsOn : [];
