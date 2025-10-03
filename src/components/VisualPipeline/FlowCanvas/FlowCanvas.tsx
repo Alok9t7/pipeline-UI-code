@@ -295,14 +295,14 @@ export const FlowCanvas = memo(function FlowCanvas({
           connectionMode={ConnectionMode.Loose}
           fitView
         >
-          <Panel position="top-left">
-            <div style={{ display: 'grid', gap: 8 }}>
-              <div>Drag items from left onto the canvas</div>
-              {/* <button onClick={exportConnectedSteps} style={{ width: 'fit-content' }}>
+          {/* <Panel position="top-left"> */}
+          {/* <div style={{ display: 'grid', gap: 8 }}> */}
+          {/* <div>Drag items from left onto the canvas</div> */}
+          {/* <button onClick={exportConnectedSteps} style={{ width: 'fit-content' }}>
                 Log Steps JSON
               </button> */}
-            </div>
-          </Panel>
+          {/* </div> */}
+          {/* </Panel> */}
           {/* Select pipeline */}
           <Panel position="top-right" style={{ background: 'none' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, alignSelf: 'flex-end' }}>
