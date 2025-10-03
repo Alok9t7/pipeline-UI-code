@@ -7,24 +7,28 @@
   min-width: 100%;
   border: 1px solid #ccc;
   border-radius: 20px;
+  padding: 16px;
 }
 .app-shell.with-props {
-  grid-template-columns: 12.25rem 1fr 20rem;
+  grid-template-columns: 12.25rem 1fr 22rem;
 }
 .left-pane {
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid#CBCBCB;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
-  border-radius: 20px 0 0 20px;
+  border-radius: 6px;
+  height: fit-content;
+  padding: 12px;
+  min-width: 20rem;
 }
 
 .left-pane-header,
 .right-pane-header-top {
-  padding: 0.75rem 0.875rem;
   font-weight: 600;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   text-align: left;
+  color: #1f1f1f;
+  font-size: 1rem;
 }
 .right-pane-header-top {
   display: flex;
@@ -33,17 +37,19 @@
   gap: 10px;
 }
 .left-pane-content {
-  padding: 0.75rem;
+  padding-top: 8px;
   display: grid;
   gap: 10px;
 }
 
 .palette-item {
-  padding: 0.625rem 0.75rem;
-  border: 1px dashed rgba(0, 0, 0, 0.25);
-  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid #e2e2e2;
+  border-radius: 4px;
   cursor: grab;
   user-select: none;
+  color: #1f1f1f;
+  background: #fff4fb;
 }
 .palette-item:active {
   cursor: grabbing;
@@ -58,22 +64,23 @@
 }
 
 .right-pane {
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.08);
+  border: 1px solid#CBCBCB;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  border-radius: 0 20px 20px 0;
+  border-radius: 6px;
+  padding: 12px;
+  min-width: 20rem;
 }
 
 .right-pane-header {
-  padding: 0.75rem 0;
   font-weight: 600;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid #cbcbcb;
 }
 
 .right-pane-content {
-  padding: 0.75rem;
+  padding-top: 0.75rem;
   display: grid;
   gap: 10px;
 }
@@ -81,19 +88,23 @@
 .right-pane-tabs {
   display: flex;
   gap: 8px;
-  padding: 0.5rem 0.75rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 .right-pane-tabs .tab {
   padding: 0.375rem 0.625rem;
-  border-radius: 6px;
+  border-radius: 0;
   background: transparent;
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   color: #1a1a1a;
 }
 .right-pane-tabs .tab.is-active {
-  border-color: rgba(0, 0, 0, 0.2);
-  background: rgba(0, 0, 0, 0.06);
+  border-bottom-color: #6d0d4d;
+  color: #6d0d4d;
+}
+.right-pane-tabs .tab:hover {
+  background: none;
+  border-bottom-color: #6d0d4d;
+  color: #6d0d4d;
 }
 
 .field {
@@ -101,8 +112,8 @@
   gap: 6px;
 }
 .field-label {
-  font-size: 0.75rem;
-  opacity: 0.8;
+  font-size: 12px;
+  color: #333333;
   text-align: left;
 }
 .field-control {
@@ -112,11 +123,12 @@
 }
 .field-control input,
 .field-control select {
-  padding: 0.5rem 0.625rem;
+  padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  background: transparent;
-  color: inherit;
+  border: 1px solid #cbcbcb;
+  background: #ffffff;
+  font-size: 16px;
+  color: #1a1a1a;
   outline: none;
 }
 .env-key-input,
@@ -126,36 +138,52 @@
 }
 /* Node styles */
 .app-node {
-  padding: 0.625rem 0.75rem;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(0, 0, 0, 0.05);
-  min-width: 10rem;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #de8ec4;
+  background: #ffffff;
+  min-width: 14.5rem;
 }
 .app-node-title {
   font-weight: 700;
   margin-bottom: 0.375rem;
+  color: #1f1f1f;
+  font-size: 14px;
 }
 .app-node-sub {
   font-size: 0.75rem;
   opacity: 0.8;
 }
-.app-node-dataprocess {
-  box-shadow: 0 0 0 2px #6ee7b7 inset;
+// .app-node-dataprocess {
+//   box-shadow: 0 0 0 2px #de8ec4 inset;
+// }
+// .app-node-trainmodel {
+//   box-shadow: 0 0 0 2px #de8ec4 inset;
+// }
+// .app-node-createmodel {
+//   box-shadow: 0 0 0 2px #de8ec4 inset;
+// }
+// .app-node-deploymodelendpoint {
+//   box-shadow: 0 0 0 2px #de8ec4 inset;
+// }
+// .app-node-deploymodelbatchinference {
+//   box-shadow: 0 0 0 2px #de8ec4 inset;
+// }
+.app-node .react-flow__handle {
+  background: #de8ec4;
+  width: 10px;
+  height: 10px;
+  border: 1px solid #de8ec4;
+  background: #ffe6f7;
 }
-.app-node-trainmodel {
-  box-shadow: 0 0 0 2px #93c5fd inset;
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #b292bb;
+  stroke-width: 1px;
 }
-.app-node-createmodel {
-  box-shadow: 0 0 0 2px #fcd34d inset;
+.react-flow__edge-path {
+  stroke: #b292bb;
+  stroke-width: 1px;
 }
-.app-node-deploymodelendpoint {
-  box-shadow: 0 0 0 2px #fda4af inset;
-}
-.app-node-deploymodelbatchinference {
-  box-shadow: 0 0 0 2px #a78bfa inset;
-}
-
 .env-add-button {
   width: fit-content;
 }
