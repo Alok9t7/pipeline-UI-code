@@ -27,6 +27,8 @@ import { useAuthToken } from '../../../hooks/useAuthToken';
 import { createPipeline, listPipelines, startTraining } from '../../../utils/api';
 import '../VisualPipeline.scss';
 import { nodeTypes } from '../nodes/nodeTypes';
+import { PropertiesPanel } from '../PropertiesPanel/PropertiesPanel';
+import { Sidebar } from '../Sidebar/Sidebar';
 import type { AppNodeData, NodeKind, PipelineStep } from '../types';
 import { summarizeErrors, validateNodeData } from '../validation';
 import { buildStepsFromGraph } from './utils/graphToSteps';
@@ -41,6 +43,8 @@ type Props = {
   setNodes: Dispatch<SetStateAction<Node<AppNodeData>[]>>;
   onSelectNode: (id: string | null) => void;
   onCreateNode: (kind: NodeKind, position: { x: number; y: number }) => void;
+  selectedNode?: Node<AppNodeData> | null;
+  onChangeNodeData?: (id: string, updater: (data: AppNodeData) => AppNodeData) => void;
 };
 
 export const FlowCanvas = memo(function FlowCanvas({
@@ -52,6 +56,8 @@ export const FlowCanvas = memo(function FlowCanvas({
   setNodes,
   onSelectNode,
   onCreateNode,
+  selectedNode,
+  onChangeNodeData,
 }: Props) {
   const { screenToFlowPosition } = useReactFlow();
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -295,6 +301,21 @@ export const FlowCanvas = memo(function FlowCanvas({
           connectionMode={ConnectionMode.Loose}
           fitView
         >
+          {/* Left palette inside canvas */}
+          <Panel position="top-left">
+            <Sidebar />
+          </Panel>
+
+          {/* Right properties panel inside canvas */}
+          {selectedNode && onChangeNodeData && (
+            <Panel position="top-right">
+                <PropertiesPanel
+                  selectedNode={selectedNode}
+                  onChangeNode={onChangeNodeData}
+                  onClose={() => onSelectNode(null)}
+                />
+            </Panel>
+          )}
           {/* <Panel position="top-left"> */}
           {/* <div style={{ display: 'grid', gap: 8 }}> */}
           {/* <div>Drag items from left onto the canvas</div> */}
@@ -334,8 +355,9 @@ export const FlowCanvas = memo(function FlowCanvas({
               </button>
             </div>
           </Panel>
-          <Panel position="bottom-center">
-            <div style={{ display: 'flex', gap: 8 }}>
+          <Panel position="bottom-left">
+            <div className="bottom-left-panel">
+              <h2 className="bottom-left-panel-header">Quick Actions</h2>
               {/* <button>Delete Step</button> */}
               <button onClick={exportConnectedSteps} disabled={creatingPipeline}>
                 {creatingPipeline ? 'Creating...' : 'Create Training Pipeline'}
@@ -366,7 +388,7 @@ export const FlowCanvas = memo(function FlowCanvas({
               </label>
             </div>
           </Panel>
-          <Controls />
+          {/* <Controls /> */}
           {/* <MiniMap /> */}
           <Background />
         </ReactFlow>

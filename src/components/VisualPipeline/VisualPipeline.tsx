@@ -10,8 +10,6 @@ import type { Edge, Node } from '@xyflow/react';
 import { useMemo, useState } from 'react';
 
 import { FlowCanvas } from './FlowCanvas/FlowCanvas';
-import { PropertiesPanel } from './PropertiesPanel/PropertiesPanel';
-import { Sidebar } from './Sidebar/Sidebar';
 import './VisualPipeline.scss';
 import type { AppNodeData, NodeKind } from './types';
 
@@ -54,8 +52,7 @@ function VisualPipelineInner() {
   };
 
   return (
-    <div className={`app-shell ${selectedNode ? 'with-props' : ''}`}>
-      <Sidebar />
+    <div className="app-shell">
       <FlowCanvas
         nodes={nodes}
         edges={edges}
@@ -65,14 +62,9 @@ function VisualPipelineInner() {
         setNodes={setNodes}
         onSelectNode={setSelectedNodeId}
         onCreateNode={handleCreateNode}
+        selectedNode={selectedNode}
+        onChangeNodeData={handleUpdateNodeData}
       />
-      {selectedNode && (
-        <PropertiesPanel
-          selectedNode={selectedNode}
-          onChangeNode={handleUpdateNodeData}
-          onClose={() => setSelectedNodeId(null)}
-        />
-      )}
     </div>
   );
 }
