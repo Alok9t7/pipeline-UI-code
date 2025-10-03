@@ -255,10 +255,11 @@ export type TrainingInput = {
 export type SageMakerStep = {
   Name: string;
   Type: string;
-  Arguments: Record<string, any>;
+  Arguments: Record<string, unknown>;
   DependsOn?: string[];
   VirtualStepName?: string;
   VirtualStepType?: string;
+  DisplayName?: string;
 };
 
 export type PipelineDefinition = {

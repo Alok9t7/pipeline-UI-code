@@ -1,15 +1,15 @@
 import type { Edge, Node } from '@xyflow/react';
 
-import type { AppNodeData, NodeKind } from '../../types';
+import type { AppNodeData, NodeKind, SageMakerStep, DeployModelEndpointData } from '../../types';
 import { topoSortSteps } from './topoSort';
 
 type LabelStrategy = 'byKind' | 'byDisplayName';
 
 export function stepsToGraph(
-  stepsInput: any[],
+  stepsInput: SageMakerStep[],
   options: { labelStrategy: LabelStrategy }
 ): { nodes: Node<AppNodeData>[]; edges: Edge[] } {
-  const steps = Array.isArray(stepsInput) ? stepsInput : [];
+  const steps: SageMakerStep[] = Array.isArray(stepsInput) ? stepsInput : [];
   const createdAt = Date.now();
   const allowedTypes = [
     'Model',
@@ -19,13 +19,13 @@ export function stepsToGraph(
     'Endpoint',
     'EndpointConfig',
   ];
-  const filteredSteps = steps.filter((s: any) => allowedTypes.includes(s.Type));
+  const filteredSteps: SageMakerStep[] = steps.filter((s) => allowedTypes.includes(s.Type));
 
   const sortedSteps = topoSortSteps(filteredSteps);
 
-  const endpointConfigs = new Map<string, any>();
-  const endpoints = new Map<string, any>();
-  const otherSteps: any[] = [];
+  const endpointConfigs = new Map<string, SageMakerStep>();
+  const endpoints = new Map<string, SageMakerStep>();
+  const otherSteps: SageMakerStep[] = [];
   for (const s of sortedSteps) {
     if (s.Type === 'EndpointConfig') endpointConfigs.set(s.Name, s);
     else if (s.Type === 'Endpoint') endpoints.set(s.Name, s);
@@ -35,42 +35,45 @@ export function stepsToGraph(
   type NodeBuild = { stepNames: string[]; node: Node<AppNodeData> };
   const nodeBuilds: NodeBuild[] = [];
 
-  endpoints.forEach((ep, epName) => {
-    const getRef: string | undefined = ep?.Arguments?.EndpointConfigName?.Get;
-    const configName = getRef?.match(/^Steps\.(.+)\.EndpointConfigName$/)?.[1];
-    const ec = configName ? endpointConfigs.get(configName) : undefined;
-    const idx = nodeBuilds.length;
+  endpoints.forEach((endpointStep, endpointStepName) => {
+    const endpointConfigGetRef: string | undefined = (endpointStep?.Arguments?.EndpointConfigName as { Get?: string } | undefined)?.Get;
+    const endpointConfigName = endpointConfigGetRef?.match(/^Steps\.(.+)\.EndpointConfigName$/)?.[1];
+    const endpointConfigStep = endpointConfigName ? endpointConfigs.get(endpointConfigName) : undefined;
+    const nodeIndex = nodeBuilds.length;
+    const endpointArguments = (endpointStep.Arguments as { EndpointName?: string; EndpointConfigName?: { Get?: string } }) || {};
+    type ProductionVariants = NonNullable<DeployModelEndpointData['Arguments']['EndpointConfig']>['ProductionVariants'];
+    const endpointConfigArguments = (endpointConfigStep?.Arguments as { ProductionVariants?: ProductionVariants }) || {};
+    const endpointData: DeployModelEndpointData = {
+      kind: 'deployModelEndpoint',
+      label: endpointStep.DisplayName || 'Deploy Model(endpoint)',
+      Type: 'Endpoint',
+      Name: endpointStep.Name,
+      DisplayName: endpointStep.DisplayName || endpointStep.Name,
+      Arguments: {
+        EndpointName: endpointArguments.EndpointName ?? '',
+        EndpointConfig: {
+          ProductionVariants: endpointConfigArguments.ProductionVariants ?? [],
+        },
+      },
+    } as DeployModelEndpointData;
     nodeBuilds.push({
-      stepNames: [epName as string, ec?.Name].filter(Boolean) as string[],
+      stepNames: [endpointStepName as string, endpointConfigStep?.Name].filter(Boolean) as string[],
       node: {
-        id: `${createdAt + idx}`,
+        id: `${createdAt + nodeIndex}`,
         type: 'appNode',
-        position: { x: 100, y: 120 + idx * 100 },
-        data: {
-          kind: 'deployModelEndpoint',
-          name: ep.Name,
-          label: ep.DisplayName || 'Deploy Model(endpoint)',
-          Type: 'Endpoint',
-          Name: ep.Name,
-          DisplayName: ep.DisplayName || ep.Name,
-          Arguments: {
-            EndpointName: ep?.Arguments?.EndpointName ?? '',
-            EndpointConfig: {
-              ProductionVariants: ec?.Arguments?.ProductionVariants ?? [],
-            },
-          },
-        } as any,
+        position: { x: 100, y: 120 + nodeIndex * 100 },
+        data: endpointData as AppNodeData,
       },
     });
   });
 
-  for (const s of otherSteps) {
+  for (const step of otherSteps) {
     let kind: NodeKind = 'dataProcess';
-    if (s.Type === 'Processing') kind = 'dataProcess';
-    else if (s.Type === 'Training') kind = 'trainModel';
-    else if (s.Type === 'Model') kind = 'createModel';
-    else if (s.Type === 'Transform') kind = 'deployModelBatchInference';
-    const idx = nodeBuilds.length;
+    if (step.Type === 'Processing') kind = 'dataProcess';
+    else if (step.Type === 'Training') kind = 'trainModel';
+    else if (step.Type === 'Model') kind = 'createModel';
+    else if (step.Type === 'Transform') kind = 'deployModelBatchInference';
+    const nodeIndex = nodeBuilds.length;
     const labelByKind =
       kind === 'dataProcess'
         ? 'Data Process'
@@ -80,26 +83,26 @@ export function stepsToGraph(
             ? 'Deploy Model(batch inference)'
             : 'Create Model';
     nodeBuilds.push({
-      stepNames: [s.Name],
+      stepNames: [step.Name],
       node: {
-        id: `${createdAt + idx}`,
+        id: `${createdAt + nodeIndex}`,
         type: 'appNode',
-        position: { x: 100, y: 120 + idx * 100 },
+        position: { x: 100, y: 120 + nodeIndex * 100 },
         data: {
           kind,
-          name: s.Name,
+          name: step.Name,
           label:
-            options.labelStrategy === 'byKind' ? labelByKind : s.DisplayName || s.Name || s.Type,
-          Type: s.Type,
-          Name: s.Name,
-          DisplayName: s.DisplayName || s.Name,
-          Arguments: s.Arguments ?? {},
-        } as any,
+            options.labelStrategy === 'byKind' ? labelByKind : step.DisplayName || step.Name || step.Type,
+          Type: step.Type,
+          Name: step.Name,
+          DisplayName: step.DisplayName || step.Name,
+          Arguments: step.Arguments ?? {},
+        } as unknown as AppNodeData,
       },
     });
   }
   // order nodes according to topological step order
-  const stepNameOrder = sortedSteps.map((s: any) => s.Name);
+  const stepNameOrder = sortedSteps.map((step) => step.Name);
   nodeBuilds.sort((a, b) => {
     const aIdx = Math.min(
       ...a.stepNames.map((n) => stepNameOrder.indexOf(n)).filter((i) => i >= 0)
@@ -118,10 +121,10 @@ export function stepsToGraph(
   const nameToId = new Map<string, string>();
   nodeBuilds.forEach((nb) => nb.stepNames.forEach((nm) => nameToId.set(nm, nb.node.id)));
   const newEdges: Edge[] = [];
-  filteredSteps.forEach((s: any) => {
-    const targetId = nameToId.get(s.Name);
+  filteredSteps.forEach((step) => {
+    const targetId = nameToId.get(step.Name);
     if (!targetId) return;
-    const deps: string[] = Array.isArray(s.DependsOn) ? s.DependsOn : [];
+    const deps: string[] = Array.isArray(step.DependsOn) ? step.DependsOn : [];
     for (const depName of deps) {
       const sourceId = nameToId.get(depName);
       if (!sourceId || sourceId === targetId) continue;
