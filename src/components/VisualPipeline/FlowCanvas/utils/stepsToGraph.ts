@@ -43,26 +43,27 @@ export function stepsToGraph(
     const endpointArguments = (endpointStep.Arguments as { EndpointName?: string; EndpointConfigName?: { Get?: string } }) || {};
     type ProductionVariants = NonNullable<DeployModelEndpointData['Arguments']['EndpointConfig']>['ProductionVariants'];
     const endpointConfigArguments = (endpointConfigStep?.Arguments as { ProductionVariants?: ProductionVariants }) || {};
-    const endpointData: DeployModelEndpointData = {
-      kind: 'deployModelEndpoint',
-      label: endpointStep.DisplayName || 'Deploy Model(endpoint)',
-      Type: 'Endpoint',
-      Name: endpointStep.Name,
-      DisplayName: endpointStep.DisplayName || endpointStep.Name,
-      Arguments: {
-        EndpointName: endpointArguments.EndpointName ?? '',
-        EndpointConfig: {
-          ProductionVariants: endpointConfigArguments.ProductionVariants ?? [],
-        },
-      },
-    } as DeployModelEndpointData;
+    
     nodeBuilds.push({
       stepNames: [endpointStepName as string, endpointConfigStep?.Name].filter(Boolean) as string[],
       node: {
         id: `${createdAt + nodeIndex}`,
         type: 'appNode',
         position: { x: 100, y: 120 + nodeIndex * 100 },
-        data: endpointData as AppNodeData,
+        data: {
+          kind: 'deployModelEndpoint',
+          name: endpointStep.Name,
+          label: endpointStep.DisplayName || 'Deploy Model(endpoint)',
+          Type: 'Endpoint',
+          Name: endpointStep.Name,
+          DisplayName: endpointStep.DisplayName || endpointStep.Name,
+          Arguments: {
+            EndpointName: endpointArguments.EndpointName ?? '',
+            EndpointConfig: {
+              ProductionVariants: endpointConfigArguments.ProductionVariants ?? [],
+            },
+          },
+        } as AppNodeData,
       },
     });
   });
